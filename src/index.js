@@ -1,6 +1,6 @@
 /**
  * CascadeMultiTree Component for uxcore
- * @author eternalsky
+ * @author chenqiu
  *
  * Copyright 2015-2016, Uxcore Team, Alinw.
  * All rights reserved.
