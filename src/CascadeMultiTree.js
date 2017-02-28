@@ -25,7 +25,7 @@ class CascadeMultiTree extends React.Component {
       value: [
         {
           value: 111,
-          label: '我是标签1',
+          label: '我是标签11231222',
         },
         {
           value: 222,
@@ -65,8 +65,8 @@ class CascadeMultiTree extends React.Component {
     e.stopPropagation();
   }
 
-  removeSigleValue() {
-
+  removeSigleValue(e) {
+    e.stopPropagation();
   }
 
   renderTopControlNode() {
@@ -157,6 +157,8 @@ CascadeMultiTree.defaultProps = {
   dropdownMatchSelectWidth: false,
   showSearch: true,
   allCheckBtn: true,
+  resultsPanelAllClearBtn: true,
+  searchPlaceholder: '请输入搜索名称',
 };
 
 
@@ -180,6 +182,8 @@ CascadeMultiTree.propTypes = {
   dropdownMatchSelectWidth: PropTypes.bool,
   showSearch: PropTypes.bool,
   allCheckBtn: PropTypes.bool,
+  resultsPanelAllClearBtn: PropTypes.bool,
+  searchPlaceholder: PropTypes.string,
 };
 
 CascadeMultiTree.displayName = 'CascadeMultiTree';

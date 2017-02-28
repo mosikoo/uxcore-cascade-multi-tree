@@ -34,7 +34,7 @@
     text-overflow: ellipsis;
   }
 
-  li&-selection-choice {
+  ul&-selection-rendered &-selection-choice {
     float: left;
     background-color: #f3f3f3;
     border-radius: 4px;
@@ -45,14 +45,47 @@
     line-height: 26px;
     margin-top: 4px;
     margin-right: 4px;
+    &-content {
+      margin: 0;
+      transition: margin .3s cubic-bezier(.165,.84,.44,1);
+    }
+    &-remove {
+      color: #919191;
+      cursor: pointer;
+      font-weight: 700;
+      position: absolute;
+      top: 0px;
+      right: 2px;
+      transition: opacity 0.3s, transform 0.3s;
+      opacity: 0;
+      transform: scale(0);
+      padding: 0 4px 0 0;
+      &:before {
+        content: '×';
+      }
+    }
+    &:hover {
+      .@{__select-tree-prefix-cls}-selection-choice-content {
+        margin: 0 8px 0 -8px;
+      }
+      .@{__select-tree-prefix-cls}-selection-choice-remove {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
   }
 }
 
 // 面板部分
 .@{__select-tree-prefix-cls}-dropdown {
+  font-size: 12px;
+  font-family: PingFangSC-Regular;
+  color: #000000;
+  letter-spacing: 0;
   height: 312px;
 }
 .@{__select-tree-prefix-cls}-renderResultsPanel, .@{__select-tree-prefix-cls}-renderTree {
+  padding: 24px 16px;
   background-color: white;
   border: 1px solid #dcdcdc;
   border-radius: @input-border-radius;
@@ -65,6 +98,7 @@
   height: 100%;
 }
 
+// 下拉结果部分
 .@{__select-tree-prefix-cls}-renderResultsPanel {
   border-left-color: transparent;
   overflow-y: hidden;
@@ -72,5 +106,29 @@
   background: #F5F5F5;
   position: relative;
 }
+
+// 下拉渲染树部分
+.@{__select-tree-prefix-cls}-renderTree {
+  &-search {
+    position: relative;
+    &-field {
+      display: inline-block;
+      width: 200px;
+      height: 30px;
+      padding-left: 7px;
+      opacity: 0.8;
+    }
+  }
+  &-select-all {
+    margin-top: 10px;
+    display: block;
+    span {
+      opacity: 0.6;
+      color: #000000;
+      margin-left: 4px;
+    }
+  }
+}
+
 
 

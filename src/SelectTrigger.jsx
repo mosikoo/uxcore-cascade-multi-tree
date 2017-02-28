@@ -36,32 +36,33 @@ class SelectTrigger extends Component {
   }
 
   renderTree() {
-    const { triggerPrefixCls, showSearch, allCheckBtn } = this.props;
+    const { triggerPrefixCls, showSearch, allCheckBtn, searchPlaceholder } = this.props;
     const { searchValue, allChecked } = this.state;
     const renderTreePrefixCls = `${triggerPrefixCls}-renderTree`;
 
     const search = !showSearch ? null :
-      <span className={`${renderTreePrefixCls}-search`}>
+      <div className={`${renderTreePrefixCls}-search`}>
         <input
           className={`${renderTreePrefixCls}-search-field`}
           role="textbox"
           value={searchValue}
           onChange={this.onChangeInput}
+          placeholder={searchPlaceholder}
         />
-      </span>;
+      </div>;
 
     return (
       <div className={renderTreePrefixCls}>
         {search}
         {
           !allCheckBtn ? null :
-            <label className="kuma-form-text">
+            <label className={`${renderTreePrefixCls}-select-all`}>
               <input
                 className="kuma-checkbox" type="checkbox"
                 checked={allChecked} onChange={this.onChangeCheckAll}
               />
               <s />
-              全选
+              <span>全选</span>
             </label>
         }
       </div>
@@ -69,11 +70,39 @@ class SelectTrigger extends Component {
   }
 
   renderResultsPanel() {
-    const { triggerPrefixCls } = this.props;
+    const { triggerPrefixCls, resultsPanelAllClearBtn } = this.props;
+    const renderResultsPanelPrefixCls = `${triggerPrefixCls}-renderResultsPanel`;
+
+    let renderRightDropdownTitle = null;
+
+    if (resultsPanelTitle) {
+      renderRightDropdownTitle = (
+        <p className={`${resultsPanelPrefixCls}-title`} style={resultsPanelTitleStyle}>
+          {resultsPanelTitle}
+        </p>
+      );
+    }
+    const num = value.length || 0;
+
+    const noContent = (<div
+      className={`${resultsPanelPrefixCls}-noContent`}
+    >
+      请从左侧选择
+    </div>);
+    const clear = (<span
+      key="rightDropdownAllclear"
+      className={`${resultsPanelPrefixCls}-allClear`}
+      onClick={this.onResultsPanelAllClear}
+    >清空</span>);
+
 
     return (
-      <div className={`${triggerPrefixCls}-renderResultsPanel`}>
-        renderResultsPanel
+      <div className={`${renderResultsPanelPrefixCls}`}>
+        <div>
+          <span className={`${renderResultsPanelPrefixCls}-fontS`}>已选择（{num}）</span>
+          {resultsPanelAllClearBtn && num ? clear : null}
+        </div>
+        {renderRightDropdownTitle}
       </div>
     );
   }
@@ -99,6 +128,8 @@ SelectTrigger.propTypes = {
   getContentDOMNode: PropTypes.func,
   showSearch: PropTypes.bool,
   allCheckBtn: PropTypes.bool,
+  searchPlaceholder: PropTypes.string,
+  resultsPanelAllClearBtn: PropTypes.bool,
 };
 
 export default SelectTrigger;
