@@ -9,6 +9,7 @@ import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import Dropdown from 'uxcore-dropdown';
 import Animate from 'rc-animate';
+import SelectTrigger from './SelectTrigger';
 
 import {
   UNSELECTABLE_STYLE, UNSELECTABLE_ATTRIBUTE, preventDefaultEvent,
@@ -28,16 +29,44 @@ class CascadeMultiTree extends React.Component {
         },
         {
           value: 222,
-          lable: '我的标签2',
+          label: '我的标签2',
         },
+        {
+          value: 22412,
+          label: '我的标签2',
+        },
+
+        {
+          value: 2223,
+          label: '我的标签2',
+        },
+
+        {
+          value: 2221,
+          label: '我的标签2',
+        },
+
       ],
     };
     this.clicktest = this.clicktest.bind(this);
     this.removeSigleValue = this.removeSigleValue.bind(this);
+    this.getContentDOMNode = this.getContentDOMNode.bind(this);
+  }
+
+  componentDidMount() {
+
+  }
+
+  getContentDOMNode() {
+    return this.refs && this.refs.selection;
   }
 
   clicktest(e) {
     e.stopPropagation();
+  }
+
+  removeSigleValue() {
+
   }
 
   renderTopControlNode() {
@@ -52,16 +81,17 @@ class CascadeMultiTree extends React.Component {
     };
 
     const selectedValueNodes = value.map((singleValue) => {
-      let content = singleValue.lable;
+      let content = singleValue.label;
       if (maxTagTextLength && typeof content === 'string' && content.length > maxTagTextLength) {
         content = `${content.slice(0, maxTagTextLength)}...`;
       }
       return (
         <li
-          key={singleValue}
+          key={singleValue.value}
           style={UNSELECTABLE_STYLE}
           {...UNSELECTABLE_ATTRIBUTE}
           onMouseDown={preventDefaultEvent}
+          className={`${prefixCls}-selection-choice`}
         >
           <span
             className={`${prefixCls}-selection-choice-remove`}
@@ -81,17 +111,24 @@ class CascadeMultiTree extends React.Component {
         key="selection"
         ref="selection"
       >
-        <ul className={ulCls}>{selectedValueNodes}</ul>;
+        <ul className={ulCls}>{selectedValueNodes}</ul>
       </div>
     );
   }
 
   render() {
-    const MultiTree = <div>muititree</div>;
+    const { prefixCls, dropdownMatchSelectWidth } = this.props;
 
     return (
       <Dropdown
-        overlay={MultiTree}
+        overlay={
+          <SelectTrigger
+            triggerPrefixCls={prefixCls}
+            getContentDOMNode={this.getContentDOMNode}
+            dropdownMatchSelectWidth={dropdownMatchSelectWidth}
+            {...this.props}
+          />
+        }
         trigger={['click']}
       >
         {this.renderTopControlNode()}
@@ -101,7 +138,7 @@ class CascadeMultiTree extends React.Component {
 }
 
 CascadeMultiTree.defaultProps = {
-  prefixCls: '',
+  prefixCls: 'uxcore-cascade-multi-tree',
   className: '',
   maxTagTextLength: 10,
   dropdownClassName: '',
@@ -117,6 +154,9 @@ CascadeMultiTree.defaultProps = {
   locale: 'zh-cn',
   onSelect: noop,
   onItemClick: noop,
+  dropdownMatchSelectWidth: false,
+  showSearch: true,
+  allCheckBtn: true,
 };
 
 
@@ -135,8 +175,11 @@ CascadeMultiTree.propTypes = {
   allowClear: PropTypes.bool,
   disabled: PropTypes.bool,
   locale: PropTypes.string,
-  onSelect: noop,
-  onItemClick: noop,
+  onSelect: PropTypes.func,
+  onItemClick: PropTypes.func,
+  dropdownMatchSelectWidth: PropTypes.bool,
+  showSearch: PropTypes.bool,
+  allCheckBtn: PropTypes.bool,
 };
 
 CascadeMultiTree.displayName = 'CascadeMultiTree';

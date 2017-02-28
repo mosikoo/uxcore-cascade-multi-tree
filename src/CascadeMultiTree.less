@@ -6,9 +6,71 @@
  * All rights reserved.
  */
 
-@__select-tree-prefix-cls: uxcore-tree-select;
+@__select-tree-prefix-cls: uxcore-cascade-multi-tree;
 
 .@{__select-tree-prefix-cls} {
   box-sizing: border-box;
+  position: relative;
+  display: inline-block;
+  color: #666;
+  min-height: 36px;
+  background-color: #fff;
+  border-radius: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  border: 1px solid #ccc;
+  min-width: 120px;
+  width: 300px;
+  ul, li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  ul&-selection-rendered {
+    padding-bottom: 2px;
+    padding-left: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  li&-selection-choice {
+    float: left;
+    background-color: #f3f3f3;
+    border-radius: 4px;
+    padding: 0 15px;
+    overflow: hidden;
+    position: relative;
+    height: 26px;
+    line-height: 26px;
+    margin-top: 4px;
+    margin-right: 4px;
+  }
 }
+
+// 面板部分
+.@{__select-tree-prefix-cls}-dropdown {
+  height: 312px;
+}
+.@{__select-tree-prefix-cls}-renderResultsPanel, .@{__select-tree-prefix-cls}-renderTree {
+  background-color: white;
+  border: 1px solid #dcdcdc;
+  border-radius: @input-border-radius;
+  box-sizing: border-box;
+  display: inline-block;
+  vertical-align: middle;
+  width: 50%;
+  height: 100%;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.@{__select-tree-prefix-cls}-renderResultsPanel {
+  border-left-color: transparent;
+  overflow-y: hidden;
+  padding-bottom: 3px;
+  background: #F5F5F5;
+  position: relative;
+}
+
 

@@ -1,6 +1,5 @@
 export const UNSELECTABLE_STYLE = {
   userSelect: 'none',
-  webkitUserSelect: 'none',
 };
 
 export const UNSELECTABLE_ATTRIBUTE = {
