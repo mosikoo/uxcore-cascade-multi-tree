@@ -10,12 +10,36 @@ import classnames from 'classnames';
 import Dropdown from 'uxcore-dropdown';
 import Animate from 'rc-animate';
 import SelectTrigger from './SelectTrigger';
+import TreeNode from './TreeNode.jsx';
 
 import {
   UNSELECTABLE_STYLE, UNSELECTABLE_ATTRIBUTE, preventDefaultEvent,
 } from './utils';
 
 function noop() {}
+
+function loopTreeData(data, level = 0) {
+  return data.map((item, index) => {
+    const pos = `${level}-${index}`;
+    const props = {
+      value: item.value,
+      label: item.label || item.value,
+      key: item.key || pos,
+      pos,
+      disabled: item.disabled,
+    };
+    let ret;
+    if (item.children && item.children.length) {
+      ret = (<TreeNode {...props}>
+        {loopTreeData(item.children, pos)}
+      </TreeNode>);
+    } else {
+      ret = <TreeNode {...props} isLeaf />;
+    }
+
+    return ret;
+  });
+}
 
 class CascadeMultiTree extends React.Component {
 
@@ -35,7 +59,6 @@ class CascadeMultiTree extends React.Component {
           value: 22412,
           label: '我的标签2',
         },
-
         {
           value: 2223,
           label: '我的标签2',
@@ -143,7 +166,7 @@ CascadeMultiTree.defaultProps = {
   maxTagTextLength: 10,
   dropdownClassName: '',
   config: {},
-  options: {},
+  options: [],
   value: '',
   defaultValue: '',
   cascadeSize: 3,
@@ -159,6 +182,9 @@ CascadeMultiTree.defaultProps = {
   allCheckBtn: true,
   resultsPanelAllClearBtn: true,
   searchPlaceholder: '请输入搜索名称',
+  resultsPanelTitleStyle: { color: 'red' },
+  resultsPanelTitle: 'test title',
+
 };
 
 
@@ -168,7 +194,7 @@ CascadeMultiTree.propTypes = {
   maxTagTextLength: PropTypes.number,
   dropdownClassName: PropTypes.string,
   config: PropTypes.object,
-  options: PropTypes.object,
+  options: PropTypes.array,
   value: PropTypes.string,
   defaultValue: PropTypes.string,
   cascadeSize: PropTypes.number,
@@ -184,6 +210,10 @@ CascadeMultiTree.propTypes = {
   allCheckBtn: PropTypes.bool,
   resultsPanelAllClearBtn: PropTypes.bool,
   searchPlaceholder: PropTypes.string,
+  resultsPanelTitleStyle: PropTypes.object,
+  resultsPanelTitle: PropTypes.oneOfType([
+    PropTypes.string, PropTypes.node,
+  ]),
 };
 
 CascadeMultiTree.displayName = 'CascadeMultiTree';

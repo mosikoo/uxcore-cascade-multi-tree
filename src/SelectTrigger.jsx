@@ -8,6 +8,7 @@ class SelectTrigger extends Component {
     this.state = {
       searchValue: '',
       allChecked: false,
+      value: [],
     };
 
     this.onChangeInput = this.onChangeInput.bind(this);
@@ -69,15 +70,25 @@ class SelectTrigger extends Component {
     );
   }
 
+  renderResultsTree() {
+    return (
+      <div>tree</div>
+    );
+  }
+
   renderResultsPanel() {
-    const { triggerPrefixCls, resultsPanelAllClearBtn } = this.props;
+    const {
+      triggerPrefixCls, resultsPanelAllClearBtn,
+      resultsPanelTitleStyle, resultsPanelTitle,
+    } = this.props;
+    const { value } = this.state;
     const renderResultsPanelPrefixCls = `${triggerPrefixCls}-renderResultsPanel`;
 
     let renderRightDropdownTitle = null;
 
     if (resultsPanelTitle) {
       renderRightDropdownTitle = (
-        <p className={`${resultsPanelPrefixCls}-title`} style={resultsPanelTitleStyle}>
+        <p className={`${renderResultsPanelPrefixCls}-title`} style={resultsPanelTitleStyle}>
           {resultsPanelTitle}
         </p>
       );
@@ -85,13 +96,13 @@ class SelectTrigger extends Component {
     const num = value.length || 0;
 
     const noContent = (<div
-      className={`${resultsPanelPrefixCls}-noContent`}
+      className={`${renderResultsPanelPrefixCls}-noContent`}
     >
       请从左侧选择
     </div>);
     const clear = (<span
       key="rightDropdownAllclear"
-      className={`${resultsPanelPrefixCls}-allClear`}
+      className={`${renderResultsPanelPrefixCls}-allClear`}
       onClick={this.onResultsPanelAllClear}
     >清空</span>);
 
@@ -103,6 +114,7 @@ class SelectTrigger extends Component {
           {resultsPanelAllClearBtn && num ? clear : null}
         </div>
         {renderRightDropdownTitle}
+        {num === 0 ? noContent : this.renderResultsTree()}
       </div>
     );
   }
@@ -130,6 +142,10 @@ SelectTrigger.propTypes = {
   allCheckBtn: PropTypes.bool,
   searchPlaceholder: PropTypes.string,
   resultsPanelAllClearBtn: PropTypes.bool,
+  resultsPanelTitleStyle: PropTypes.object,
+  resultsPanelTitle: PropTypes.oneOfType([
+    PropTypes.string, PropTypes.node,
+  ]),
 };
 
 export default SelectTrigger;

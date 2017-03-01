@@ -6,8 +6,9 @@
  * All rights reserved.
  */
 
-const React = require('react');
-const CascadeMultiTree = require('../src');
+import React from 'react';
+import CascadeMultiTree from '../src';
+import { options } from './const';
 
 class Demo extends React.Component {
 
@@ -22,7 +23,9 @@ class Demo extends React.Component {
     return (
       <div style={{ margin: '20px' }}>
         <h2>test Demo</h2>
-        <CascadeMultiTree />
+        <CascadeMultiTree
+          options={options}
+        />
       </div>
     );
   }
