@@ -7,7 +7,11 @@ export const options = [{
     children: [{
       value: 'xihu',
       label: '西湖',
-    }],
+    },
+      {
+        value: 'shangcheng',
+        label: '上城',
+      }],
   }],
 }, {
   value: 'jiangsu',

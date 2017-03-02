@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "classnames": "^2.1.2",
+    "lodash": "^4.17.4",
     "object-assign": "^4.0.0",
     "rc-animate": "^2.3.3",
     "uxcore-dropdown": "~0.4.1"

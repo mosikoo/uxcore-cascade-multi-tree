@@ -10,7 +10,6 @@ class SelectTrigger extends Component {
       allChecked: false,
       value: [],
     };
-
     this.onChangeInput = this.onChangeInput.bind(this);
     this.onChangeCheckAll = this.onChangeCheckAll.bind(this);
   }

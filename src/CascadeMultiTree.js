@@ -8,15 +8,17 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import Dropdown from 'uxcore-dropdown';
-import Animate from 'rc-animate';
 import SelectTrigger from './SelectTrigger';
 import TreeNode from './TreeNode.jsx';
 
 import {
   UNSELECTABLE_STYLE, UNSELECTABLE_ATTRIBUTE, preventDefaultEvent,
+  SHOW_ALL, SHOW_CHILD, SHOW_PARENT, toArray,
+  getTreeNodesStates,
 } from './utils';
 
 function noop() {}
+
 
 function loopTreeData(data, level = 0) {
   return data.map((item, index) => {
@@ -26,7 +28,9 @@ function loopTreeData(data, level = 0) {
       label: item.label || item.value,
       key: item.key || pos,
       pos,
-      disabled: item.disabled,
+      disabled: item.disabled || false,
+      childrenLen: item.children && item.children.length || 0,
+      childrenCheckedNum: 0,
     };
     let ret;
     if (item.children && item.children.length) {
@@ -45,33 +49,39 @@ class CascadeMultiTree extends React.Component {
 
   constructor(props) {
     super(props);
+    // this.state = {
+    //   value: [
+    //     {
+    //       value: 111,
+    //       label: '我是标签11231222',
+    //     },
+    //     {
+    //       value: 222,
+    //       label: '我的标签2',
+    //     },
+    //     {
+    //       value: 22412,
+    //       label: '我的标签2',
+    //     },
+    //     {
+    //       value: 2223,
+    //       label: '我的标签2',
+    //     },
+
+    //     {
+    //       value: 2221,
+    //       label: '我的标签2',
+    //     },
+
+    //   ],
+    // };
+
+    this.renderedTreeData = this.renderTreeData();
+    const value = this.getValue(toArray(props.value || props.defaultValue));
     this.state = {
-      value: [
-        {
-          value: 111,
-          label: '我是标签11231222',
-        },
-        {
-          value: 222,
-          label: '我的标签2',
-        },
-        {
-          value: 22412,
-          label: '我的标签2',
-        },
-        {
-          value: 2223,
-          label: '我的标签2',
-        },
-
-        {
-          value: 2221,
-          label: '我的标签2',
-        },
-
-      ],
+      value,
     };
-    this.clicktest = this.clicktest.bind(this);
+
     this.removeSigleValue = this.removeSigleValue.bind(this);
     this.getContentDOMNode = this.getContentDOMNode.bind(this);
   }
@@ -84,12 +94,29 @@ class CascadeMultiTree extends React.Component {
     return this.refs && this.refs.selection;
   }
 
-  clicktest(e) {
-    e.stopPropagation();
+  getValue(value) {
+    const { showCheckedStrategy } = this.props;
+
+    this.treeNodesStates = getTreeNodesStates(this.renderedTreeData, value);
+
+    return this.treeNodesStates;
   }
+
 
   removeSigleValue(e) {
     e.stopPropagation();
+  }
+
+  renderTreeData(props) {
+    const validProps = props || this.props;
+    const { options } = validProps;
+    if (options === this.props.options && this.renderedTreeData) {
+      this.cacheTreeData = true;
+      return this.renderTreeData;
+    }
+    this.cacheTreeData = false;
+
+    return loopTreeData(options);
   }
 
   renderTopControlNode() {
@@ -184,7 +211,7 @@ CascadeMultiTree.defaultProps = {
   searchPlaceholder: '请输入搜索名称',
   resultsPanelTitleStyle: { color: 'red' },
   resultsPanelTitle: 'test title',
-
+  showCheckedStrategy: SHOW_CHILD,
 };
 
 
@@ -195,7 +222,9 @@ CascadeMultiTree.propTypes = {
   dropdownClassName: PropTypes.string,
   config: PropTypes.object,
   options: PropTypes.array,
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([
+    PropTypes.string, PropTypes.array,
+  ]),
   defaultValue: PropTypes.string,
   cascadeSize: PropTypes.number,
   placeholder: PropTypes.string,
@@ -213,6 +242,9 @@ CascadeMultiTree.propTypes = {
   resultsPanelTitleStyle: PropTypes.object,
   resultsPanelTitle: PropTypes.oneOfType([
     PropTypes.string, PropTypes.node,
+  ]),
+  showCheckedStrategy: PropTypes.oneOf([
+    SHOW_ALL, SHOW_CHILD, SHOW_PARENT,
   ]),
 };
 
