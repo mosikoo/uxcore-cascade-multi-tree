@@ -4,10 +4,11 @@ export const options = [{
   children: [{
     value: 'hangzhou',
     label: '杭州',
-    children: [{
-      value: 'xihu',
-      label: '西湖',
-    },
+    children: [
+      {
+        value: 'xihu',
+        label: '西湖',
+      },
       {
         value: 'shangcheng',
         label: '上城',

@@ -39,6 +39,9 @@ const loopTree = (treeData, callback) => {
 };
 
 const isInherit = (parentPos, childPos) => {
+  if (parentPos.length > childPos.length) {
+    return false;
+  }
   const parentPosArr = parentPos.split('-');
   const childPosArr = childPos.split('-');
 
@@ -56,7 +59,7 @@ const getParentPos = (childPos) => {
  * 输入['0-1', '0-1-1', '0-1-0']
  * 输出['0-1']
  */
-const FilterDulpNodePos = (posArrs) => {
+const filterDulpNodePos = (posArrs) => {
   const posObj = {};
   posArrs.forEach(pos => {
     const posArr = pos.split('-');
@@ -114,6 +117,8 @@ const getCheck = (treeNodesStates, checkedNodesPos) => {
 export const getTreeNodesStates = (treeData, vals) => {
   const checkedNodesPos = [];
   const treeNodesStates = {};
+  const checkedNodes = [];
+  const allPos = [];
   loopTree(treeData, (node, props) => {
     const { pos, value, label } = props;
     treeNodesStates[pos] = {
@@ -121,15 +126,37 @@ export const getTreeNodesStates = (treeData, vals) => {
       checked: false,
       halfChecked: false,
     };
+    allPos.push(pos);
     if (vals.indexOf(props.value) !== -1) {
       checkedNodesPos.push(pos);
+      checkedNodes.push({ pos, value, label });
     }
   });
 
   console.log(treeNodesStates);
+  const filterPos = filterDulpNodePos(checkedNodesPos);
+  // 去掉已经存在的点
+  const allPosBak = allPos.filter(item => checkedNodesPos.indexOf(item) === -1);
+  filterPos.forEach(item => {
+    for (let i = 0; i < allPosBak.length;) {
+      if (isInherit(item, allPosBak[i])) {
+        checkedNodesPos.push(allPosBak[i]);
+        allPosBak.splice(i, 1);
+      } else {
+        i += 1;
+      }
+    }
+  });
 
-  // getCheck(treeNodesStates, checkedNodesPos);  
+  console.log(checkedNodesPos);
 
 
-  return checkedNodes;
+  // getCheck(treeNodesStates, checkedNodesPos);
+
+  return Object.keys(treeNodesStates).map((key) => {
+    if (checkedNodesPos.indexOf(key) !== -1) {
+      return treeNodesStates[key];
+    }
+    return null;
+  }).filter(p => p);
 };
