@@ -38,21 +38,21 @@ const loopTree = (treeData, callback) => {
   });
 };
 
-const isInherit = (parentPos, childPos) => {
+/*
+ * isStrict 为 true，表示是绝对的父子关系
+ */
+const isInherit = (parentPos, childPos, isStrict = false) => {
   if (parentPos.length > childPos.length) {
     return false;
   }
   const parentPosArr = parentPos.split('-');
   const childPosArr = childPos.split('-');
 
-  return parentPosArr.every((item, index) => item === childPosArr[index]);
+  return parentPosArr.every((item, index) => item === childPosArr[index]) &&
+    (!isStrict || parentPosArr.length === childPosArr.length - 1);
 };
 
-const getParentPos = (childPos) => {
-  const posArr = childPos.split('-');
-  const len = posArr.length;
-  return posArr.splice(len, 1).join('-');
-};
+const getParentPos = childPos => childPos.split('-').slice(0, -1).join('-');
 
 /*
  * 去掉重复的pos
@@ -90,39 +90,40 @@ const filterDulpNodePos = (posArrs) => {
   return nPos;
 };
 
-const getCheck = (treeNodesStates, checkedNodesPos) => {
-  Object.keys(treeNodesStates).forEach(key => {
-    const targetNode = treeNodesStates[key];
-    const { childrenCheckedNum, childrenLen } = targetNode;
+// const getCheck = (treeNodesStates, checkedNodesPos) => {
+//   Object.keys(treeNodesStates).forEach(key => {
+//     const targetNode = treeNodesStates[key];
+//     const { childrenCheckedNum, childrenLen } = targetNode;
 
-    if (checkedNodesPos.indexOf(key) !== -1) {
-      targetNode.checked = true;
+//     if (checkedNodesPos.indexOf(key) !== -1) {
+//       targetNode.checked = true;
 
-      // 父节点childrenCheckedNum + 1 用于后面判断
-      // 如果不存在则不会加
-      const parentKey = getParentPos(key);
-      if (treeNodesStates[parentKey]) {
-        treeNodesStates[parentKey].childrenCheckedNum++;
-      }
-    } else if (childrenLen > 0 || childrenCheckedNum > 0) {
-      if (childrenLen === childrenCheckedNum) {
-        targetNode.checked = true;
-      } else {
-        targetNode.halfChecked = true;
-      }
-    }
-  });
-};
+//       // 父节点childrenCheckedNum + 1 用于后面判断
+//       // 如果不存在则不会加
+//       const parentKey = getParentPos(key);
+//       if (treeNodesStates[parentKey]) {
+//         treeNodesStates[parentKey].childrenCheckedNum++;
+//       }
+//     } else if (childrenLen > 0 || childrenCheckedNum > 0) {
+//       if (childrenLen === childrenCheckedNum) {
+//         targetNode.checked = true;
+//       } else {
+//         targetNode.halfChecked = true;
+//       }
+//     }
+//   });
+// };
 
 export const getTreeNodesStates = (treeData, vals) => {
-  const checkedNodesPos = [];
+  let checkedNodesPos = [];
   const treeNodesStates = {};
   const checkedNodes = [];
   const allPos = [];
   loopTree(treeData, (node, props) => {
-    const { pos, value, label } = props;
+    const { pos, value, label, childrenLen } = props;
     treeNodesStates[pos] = {
       pos, value, label, node,
+      childrenLen,
       checked: false,
       halfChecked: false,
     };
@@ -135,18 +136,59 @@ export const getTreeNodesStates = (treeData, vals) => {
 
   console.log(treeNodesStates);
   const filterPos = filterDulpNodePos(checkedNodesPos);
+  const halfCheckedNodesObj = {};
   // 去掉已经存在的点
   const allPosBak = allPos.filter(item => checkedNodesPos.indexOf(item) === -1);
+  // 加入被选中的childNode
   filterPos.forEach(item => {
     for (let i = 0; i < allPosBak.length;) {
-      if (isInherit(item, allPosBak[i])) {
-        checkedNodesPos.push(allPosBak[i]);
+      const targetPos = allPosBak[i];
+      if (isInherit(item, targetPos)) {
+        checkedNodesPos.push(targetPos);
         allPosBak.splice(i, 1);
       } else {
+        if (isInherit(targetPos, item, true)) {
+          halfCheckedNodesObj[targetPos] = halfCheckedNodesObj[targetPos] ?
+            halfCheckedNodesObj[targetPos] + 1 : 1;
+        }
         i += 1;
       }
     }
   });
+  // 加入被选中的parentNode
+  const checkedNodesPosTmp = [];
+  Object.keys(halfCheckedNodesObj).forEach((key) => {
+    if (halfCheckedNodesObj[key] === treeNodesStates[key].childrenLen) {
+      checkedNodesPosTmp.push(key);
+    }
+  });
+  checkedNodesPos = checkedNodesPos.concat(checkedNodesPosTmp); // 合并
+  function loop(newCheckedNodesPos) {
+    const checkedNodesPosTmpInFunc = [];
+    const beEffectPos = []; // 受影响的节点
+    newCheckedNodesPos.forEach(key => {
+      const parentPos = getParentPos(key);
+      if (parentPos.split('-').length < 2) {
+        return;
+      }
+      beEffectPos.push(parentPos);
+      halfCheckedNodesObj[parentPos] = halfCheckedNodesObj[parentPos] ?
+        halfCheckedNodesObj[parentPos] + 1: 1;
+    });
+
+    beEffectPos.forEach((key) => {
+      if (halfCheckedNodesObj[key] === treeNodesStates[key].childrenLen) {
+        checkedNodesPosTmpInFunc.push(key);
+      }
+    });
+    checkedNodesPos = checkedNodesPos.concat(checkedNodesPosTmpInFunc); // 合并
+
+    if (checkedNodesPosTmpInFunc.length) {
+      loop(checkedNodesPosTmpInFunc);
+    }
+  }
+
+  loop(checkedNodesPosTmp);
 
   console.log(checkedNodesPos);
 

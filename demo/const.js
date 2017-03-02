@@ -17,12 +17,24 @@ export const options = [{
 }, {
   value: 'jiangsu',
   label: '江苏',
-  children: [{
-    value: 'nanjing',
-    label: '南京',
-    children: [{
-      value: 'zhonghuamen',
-      label: '中华门',
-    }],
-  }],
+  children: [
+    {
+      value: 'nanjing',
+      label: '南京',
+      children: [
+        {
+          value: 'zhonghuamen',
+          label: '中华门',
+        },
+        {
+          value: 'subei',
+          label: '苏北',
+        },
+      ],
+    },
+    {
+      value: 'suzhou',
+      label: '苏州',
+    },
+  ],
 }];

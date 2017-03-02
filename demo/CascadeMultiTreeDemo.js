@@ -25,7 +25,7 @@ class Demo extends React.Component {
         <h2>test Demo</h2>
         <CascadeMultiTree
           options={options}
-          value={['nanjing', 'xihu', 'hangzhou']}
+          value={['shangcheng', 'xihu', 'zhonghuamen', 'nanjing']}
         />
       </div>
     );
