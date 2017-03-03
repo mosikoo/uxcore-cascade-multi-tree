@@ -39,14 +39,16 @@ const loopTree = (treeData, callback) => {
 };
 
 /*
+ * 功能： 是否为上下级关系
  * isStrict 为 true，表示是绝对的父子关系
  */
 const isInherit = (parentPos, childPos, isStrict = false) => {
-  if (parentPos.length > childPos.length) {
-    return false;
-  }
   const parentPosArr = parentPos.split('-');
   const childPosArr = childPos.split('-');
+
+  if (parentPosArr.length >= childPosArr.length) {
+    return false;
+  }
 
   return parentPosArr.every((item, index) => item === childPosArr[index]) &&
     (!isStrict || parentPosArr.length === childPosArr.length - 1);
@@ -119,6 +121,8 @@ export const getTreeNodesStates = (treeData, vals) => {
   const treeNodesStates = {};
   const checkedNodes = [];
   const allPos = [];
+  const halfCheckedNodes = [];
+  const allPosBakForFilterHalf = []; // 用于筛选halfCheckNodes
   loopTree(treeData, (node, props) => {
     const { pos, value, label, childrenLen } = props;
     treeNodesStates[pos] = {
@@ -128,6 +132,9 @@ export const getTreeNodesStates = (treeData, vals) => {
       halfChecked: false,
     };
     allPos.push(pos);
+    if (childrenLen !== 0) {
+      allPosBakForFilterHalf.push(pos);
+    }
     if (vals.indexOf(props.value) !== -1) {
       checkedNodesPos.push(pos);
       checkedNodes.push({ pos, value, label });
@@ -156,6 +163,7 @@ export const getTreeNodesStates = (treeData, vals) => {
     }
   });
   // 加入被选中的parentNode
+  // todo 优化
   const checkedNodesPosTmp = [];
   Object.keys(halfCheckedNodesObj).forEach((key) => {
     if (halfCheckedNodesObj[key] === treeNodesStates[key].childrenLen) {
@@ -173,7 +181,7 @@ export const getTreeNodesStates = (treeData, vals) => {
       }
       beEffectPos.push(parentPos);
       halfCheckedNodesObj[parentPos] = halfCheckedNodesObj[parentPos] ?
-        halfCheckedNodesObj[parentPos] + 1: 1;
+        halfCheckedNodesObj[parentPos] + 1 : 1;
     });
 
     beEffectPos.forEach((key) => {
@@ -190,7 +198,20 @@ export const getTreeNodesStates = (treeData, vals) => {
 
   loop(checkedNodesPosTmp);
 
-  console.log(checkedNodesPos);
+  // 筛选halfcheckedNode
+  filterPos.forEach(item => {
+    for (let i = 0; i < allPosBakForFilterHalf.length;) {
+      const targetPos = allPosBakForFilterHalf[i];
+      if (isInherit(targetPos, item)) {
+        halfCheckedNodes.push(targetPos);
+        allPosBakForFilterHalf.splice(i, 1);
+      } else {
+        i += 1;
+      }
+    }
+  });
+
+  console.log(checkedNodesPos, halfCheckedNodes);
 
 
   // getCheck(treeNodesStates, checkedNodesPos);
