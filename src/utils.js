@@ -30,11 +30,10 @@ export const toArray = (value) => {
 
 const loopTree = (treeData, callback) => {
   treeData.forEach(item => {
-    const props = item.props;
-    if (props.children && props.children.length) {
-      loopTree(props.children, callback);
+    if (item.children && item.children.length) {
+      loopTree(item.children, callback);
     }
-    callback(item, props);
+    callback(item);
   });
 };
 
@@ -123,10 +122,10 @@ export const getTreeNodesStates = (treeData, vals) => {
   const allPos = [];
   const halfCheckedNodes = [];
   const allPosBakForFilterHalf = []; // 用于筛选halfCheckNodes
-  loopTree(treeData, (node, props) => {
+  loopTree(treeData, (props) => {
     const { pos, value, label, childrenLen } = props;
     treeNodesStates[pos] = {
-      pos, value, label, node,
+      pos, value, label,
       childrenLen,
       checked: false,
       halfChecked: false,

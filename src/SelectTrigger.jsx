@@ -1,6 +1,8 @@
 import React, { PropTypes, Component } from 'react';
 import ReactDOM from 'react-dom';
 import classnames from 'classnames';
+import assign from 'object-assign';
+import TreeNode from './TreeNode';
 
 class SelectTrigger extends Component {
   constructor(props) {
@@ -35,6 +37,14 @@ class SelectTrigger extends Component {
     });
   }
 
+  renderTreeBody() {
+    return (
+      <div>
+        {this.treeNodes}
+      </div>
+    );
+  }
+
   renderTree() {
     const { triggerPrefixCls, showSearch, allCheckBtn, searchPlaceholder } = this.props;
     const { searchValue, allChecked } = this.state;
@@ -65,6 +75,7 @@ class SelectTrigger extends Component {
               <span>全选</span>
             </label>
         }
+        {this.renderTreeBody()}
       </div>
     );
   }
@@ -119,7 +130,30 @@ class SelectTrigger extends Component {
   }
 
   render() {
-    const { triggerPrefixCls } = this.props;
+    const { triggerPrefixCls, treeData } = this.props;
+    let treeNodes;
+    console.log(treeData);
+    const recursive = (treeDataBak) =>
+      treeDataBak.map((treeNode) => {
+        const props = assign({}, treeNode);
+        props.children = null;
+        let ret;
+        if (treeNode.children && treeNode.children.length > 0) {
+          ret = (<TreeNode {...props} key={props.key}>
+              {recursive(treeNode.children)}
+          </TreeNode>);
+        } else {
+          ret = <TreeNode {...props} key={props.key} />;
+        }
+        return ret;
+      });
+
+    if (this.cacheTreeData && this.treeNodes) {
+      treeNodes = this.treeNodes;
+    } else {
+      treeNodes = recursive(treeData);
+      this.treeNodes = treeNodes;
+    }
 
     return (
       <div
@@ -145,6 +179,7 @@ SelectTrigger.propTypes = {
   resultsPanelTitle: PropTypes.oneOfType([
     PropTypes.string, PropTypes.node,
   ]),
+  treeData: PropTypes.array,
 };
 
 export default SelectTrigger;

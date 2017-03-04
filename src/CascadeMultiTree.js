@@ -28,20 +28,24 @@ function loopTreeData(data, level = 0) {
       label: item.label || item.value,
       key: item.key || pos,
       pos,
-      disabled: item.disabled || false,
       childrenLen: item.children && item.children.length || 0,
-      childrenCheckedNum: 0,
     };
-    let ret;
+
     if (item.children && item.children.length) {
-      ret = (<TreeNode {...props}>
-        {loopTreeData(item.children, pos)}
-      </TreeNode>);
-    } else {
-      ret = <TreeNode {...props} isLeaf />;
+      props.children = loopTreeData(item.children, pos);
     }
 
-    return ret;
+    return props;
+    // let ret;
+    // if (item.children && item.children.length) {
+    //   ret = (<TreeNode {...props}>
+    //     {loopTreeData(item.children, pos)}
+    //   </TreeNode>);
+    // } else {
+    //   ret = <TreeNode {...props} isLeaf />;
+    // }
+
+    // return ret;
   });
 }
 
@@ -49,32 +53,6 @@ class CascadeMultiTree extends React.Component {
 
   constructor(props) {
     super(props);
-    // this.state = {
-    //   value: [
-    //     {
-    //       value: 111,
-    //       label: '我是标签11231222',
-    //     },
-    //     {
-    //       value: 222,
-    //       label: '我的标签2',
-    //     },
-    //     {
-    //       value: 22412,
-    //       label: '我的标签2',
-    //     },
-    //     {
-    //       value: 2223,
-    //       label: '我的标签2',
-    //     },
-
-    //     {
-    //       value: 2221,
-    //       label: '我的标签2',
-    //     },
-
-    //   ],
-    // };
 
     this.renderedTreeData = this.renderTreeData();
     const value = this.getValue(toArray(props.value || props.defaultValue));
@@ -112,7 +90,7 @@ class CascadeMultiTree extends React.Component {
     const { options } = validProps;
     if (options === this.props.options && this.renderedTreeData) {
       this.cacheTreeData = true;
-      return this.renderTreeData;
+      return this.renderedTreeData;
     }
     this.cacheTreeData = false;
 
@@ -176,6 +154,8 @@ class CascadeMultiTree extends React.Component {
             triggerPrefixCls={prefixCls}
             getContentDOMNode={this.getContentDOMNode}
             dropdownMatchSelectWidth={dropdownMatchSelectWidth}
+            treeData={this.renderedTreeData}
+            cacheTreeData={this.cacheTreeData}
             {...this.props}
           />
         }
