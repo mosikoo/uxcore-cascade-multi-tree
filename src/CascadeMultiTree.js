@@ -28,6 +28,7 @@ function loopTreeData(data, level = 0) {
       label: item.label || item.value,
       key: item.key || pos,
       pos,
+      level: pos.split('-').length - 2,
       childrenLen: item.children && item.children.length || 0,
     };
 

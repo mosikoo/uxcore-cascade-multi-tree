@@ -130,5 +130,51 @@
   }
 }
 
+// 树渲染
+.@{__select-tree-prefix-cls}-treeNode {
+  &:hover{
+    background: #EBEBEB;
+    color: @brand-primary;
+    .@{__select-tree-prefix-cls}-clear {
+        opacity: 1;
+        transform: scale(1);
+        -ms-transform: scale(1);
+    }
+  }
+  &-clear {
+    position: absolute;
+    right: 15px;
+    top: 1px;
+    cursor: pointer;
+    color: @brand-primary;
+    transition: opacity .3s, transform .3s;
+    transform: scale(0);
+    -ms-transform: scale(0);
+  }
+  span {
+    vertical-align: middle;
+  }
+  height: 28px;
+  line-height: 28px;
+  white-space: nowrap;
+  position: relative;
+  &-arrow {
+    color: #000;
+    opacity: 0.4;
+    vertical-align: middle;
+    cursor: pointer;
+    margin-right: 2px;
+  }
+  .kuma-checkbox[type="checkbox"] + s {
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+  &-allSelect {
+    font-family: PingFangSC-Regular;
+    color: #999999;
+    margin-left: 12px;
+  }
+}
+
 
 

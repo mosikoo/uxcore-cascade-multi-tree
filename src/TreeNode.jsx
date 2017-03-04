@@ -9,28 +9,48 @@ class TreeNode extends Component {
     };
 
     this.onChangeCheck = this.onChangeCheck.bind(this);
+    this.expand = this.expand.bind(this);
   }
 
   onChangeCheck() {
     console.log('checked', !this.props.checked);
   }
 
+  expand() {
+    this.setState({
+      expand: !this.state.expand,
+    });
+  }
+
   render() {
     const { expand } = this.state;
     const { label, value, children, prefixCls, disabled, treeCheckable, checked, level } = this.props;
-
+    const treePrefixCls = `${prefixCls}-treeNode`;
+console.log(treeCheckable)
     const arrowCls = {
-      ['kuma-icon-triangle-right']: !expand,
-      ['kuma-icon-triangle-down']: expand,
-      ['kuma-icon']: true,
+      'kuma-icon-triangle-right': !expand,
+      'kuma-icon-triangle-down': expand,
+      [`kuma-icon ${treePrefixCls}-arrow`]: true,
     };
+    const paddingLeftNum = treeCheckable ? 18 : 13;
+    const style = {
+      paddingLeft: children ? `${level * 18}px` : `${level * 18 + paddingLeftNum}px`,
+    };
+    // const style = {
+    //   paddingLeft: `${16 + (level -1) * 18}px`,
+    // };
+
 
     return (
       <div>
-        <div>
+        <div style={style} className={treePrefixCls}>
           {
             children &&
-              <i className={classnames(arrowCls)} />}
+              <i
+                className={classnames(arrowCls)}
+                onClick={this.expand}
+              />
+          }
           {
             treeCheckable ?
               <label className="kuma-form-text">
@@ -75,6 +95,7 @@ TreeNode.propTypes = {
   disabled: PropTypes.bool,
   checked: PropTypes.bool,
   level: PropTypes.number,
+  width: PropTypes.number,
 };
 
 TreeNode.defaultProps = {
@@ -82,6 +103,7 @@ TreeNode.defaultProps = {
   treeCheckable: true,
   checked: false,
   level: 0,
+  width: 240,
 };
 
 export default TreeNode;
