@@ -38,6 +38,30 @@ const loopTree = (treeData, callback) => {
 };
 
 /*
+ * @params: options
+ * @return: 渲染树
+ */
+export const loopTreeData = (data, level = 0) =>
+  data.map((item, index) => {
+    const pos = `${level}-${index}`;
+    const props = {
+      value: item.value,
+      label: item.label || item.value,
+      key: item.key || pos,
+      pos,
+      level: pos.split('-').length - 2,
+      childrenLen: item.children && item.children.length || 0,
+    };
+
+    if (item.children && item.children.length) {
+      props.children = loopTreeData(item.children, pos);
+    }
+
+    return props;
+  });
+
+
+/*
  * 功能： 是否为上下级关系
  * isStrict 为 true，表示是绝对的父子关系
  */
@@ -115,10 +139,13 @@ const filterDulpNodePos = (posArrs) => {
 //   });
 // };
 
+/*
+ * @params: 渲染树、 被选中的values
+ * @return: 被选中的节点、选中及半选节点的pos
+ */
 export const getTreeNodesStates = (treeData, vals) => {
   let checkedNodesPos = [];
   const treeNodesStates = {};
-  const checkedNodes = [];
   const allPos = [];
   const halfCheckedNodes = [];
   const allPosBakForFilterHalf = []; // 用于筛选halfCheckNodes
@@ -127,8 +154,6 @@ export const getTreeNodesStates = (treeData, vals) => {
     treeNodesStates[pos] = {
       pos, value, label,
       childrenLen,
-      checked: false,
-      halfChecked: false,
     };
     allPos.push(pos);
     if (childrenLen !== 0) {
@@ -136,7 +161,6 @@ export const getTreeNodesStates = (treeData, vals) => {
     }
     if (vals.indexOf(props.value) !== -1) {
       checkedNodesPos.push(pos);
-      checkedNodes.push({ pos, value, label });
     }
   });
 
@@ -210,15 +234,17 @@ export const getTreeNodesStates = (treeData, vals) => {
     }
   });
 
-  console.log(checkedNodesPos, halfCheckedNodes);
-
-
   // getCheck(treeNodesStates, checkedNodesPos);
 
-  return Object.keys(treeNodesStates).map((key) => {
+  const checkedNodes = Object.keys(treeNodesStates).map((key) => {
     if (checkedNodesPos.indexOf(key) !== -1) {
       return treeNodesStates[key];
     }
     return null;
   }).filter(p => p);
+
+  console.log(checkedNodesPos, halfCheckedNodes, checkedNodes);
+  return {
+    checkedNodes, checkedNodesPos, halfCheckedNodes,
+  };
 };

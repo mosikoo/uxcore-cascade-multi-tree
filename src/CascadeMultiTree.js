@@ -14,41 +14,11 @@ import TreeNode from './TreeNode.jsx';
 import {
   UNSELECTABLE_STYLE, UNSELECTABLE_ATTRIBUTE, preventDefaultEvent,
   SHOW_ALL, SHOW_CHILD, SHOW_PARENT, toArray,
-  getTreeNodesStates,
+  getTreeNodesStates, loopTreeData,
 } from './utils';
 
 function noop() {}
 
-
-function loopTreeData(data, level = 0) {
-  return data.map((item, index) => {
-    const pos = `${level}-${index}`;
-    const props = {
-      value: item.value,
-      label: item.label || item.value,
-      key: item.key || pos,
-      pos,
-      level: pos.split('-').length - 2,
-      childrenLen: item.children && item.children.length || 0,
-    };
-
-    if (item.children && item.children.length) {
-      props.children = loopTreeData(item.children, pos);
-    }
-
-    return props;
-    // let ret;
-    // if (item.children && item.children.length) {
-    //   ret = (<TreeNode {...props}>
-    //     {loopTreeData(item.children, pos)}
-    //   </TreeNode>);
-    // } else {
-    //   ret = <TreeNode {...props} isLeaf />;
-    // }
-
-    // return ret;
-  });
-}
 
 class CascadeMultiTree extends React.Component {
 
@@ -56,6 +26,7 @@ class CascadeMultiTree extends React.Component {
     super(props);
 
     this.renderedTreeData = this.renderTreeData();
+    console.log( this.renderedTreeData, 'renderTreeData')
     const value = this.getValue(toArray(props.value || props.defaultValue));
     this.state = {
       value,
@@ -78,7 +49,7 @@ class CascadeMultiTree extends React.Component {
 
     this.treeNodesStates = getTreeNodesStates(this.renderedTreeData, value);
 
-    return this.treeNodesStates;
+    return this.treeNodesStates.checkedNodes;
   }
 
 
@@ -155,8 +126,9 @@ class CascadeMultiTree extends React.Component {
             triggerPrefixCls={prefixCls}
             getContentDOMNode={this.getContentDOMNode}
             dropdownMatchSelectWidth={dropdownMatchSelectWidth}
-            treeData={this.renderedTreeData}
-            cacheTreeData={this.cacheTreeData}
+            treeData={this.renderedTreeData} // todo 缓存
+            treeNodesStates={this.treeNodesStates} // todo 缓存
+            cacheTreeData={this.cacheTreeData} // todo 缓存
             {...this.props}
           />
         }

@@ -3,15 +3,15 @@ export const options = [{
   label: '浙江',
   children: [{
     value: 'hangzhou',
-    label: '杭州',
+    label: '杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州',
     children: [
       {
         value: 'xihu',
-        label: '西湖',
+        label: '西湖西湖西湖西湖西湖西湖西湖西湖西湖西湖',
       },
       {
         value: 'shangcheng',
-        label: '上城',
+        label: '上城上城上城上城上城上城上城上城上城上城',
       }],
   }],
 }, {
@@ -24,11 +24,11 @@ export const options = [{
       children: [
         {
           value: 'zhonghuamen',
-          label: '中华门',
+          label: '中华门中华门中华门中华门中华门中华门中华门',
         },
         {
           value: 'subei',
-          label: '苏北',
+          label: '苏北苏北苏北苏北苏北苏北苏北苏北苏北',
         },
       ],
     },

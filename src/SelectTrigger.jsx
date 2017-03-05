@@ -1,4 +1,5 @@
 import React, { PropTypes, Component } from 'react';
+import ReactDOM from 'react-dom';
 import classnames from 'classnames';
 import assign from 'object-assign';
 import TreeNode from './TreeNode';
@@ -9,7 +10,6 @@ class SelectTrigger extends Component {
     this.state = {
       searchValue: '',
       allChecked: false,
-      value: [1],
     };
     this.onChangeInput = this.onChangeInput.bind(this);
     this.onChangeCheckAll = this.onChangeCheckAll.bind(this);
@@ -36,12 +36,13 @@ class SelectTrigger extends Component {
     });
   }
 
-  renderTreeBody() {
-    return (
-      <div>
-        {this.treeNodes}
-      </div>
-    );
+  processTreeNode(treeNodes) {
+    // 传入节点及被选中的位置，和被半选中的位置进行筛选
+    console.log(treeNodes, 'treeNodes', )
+    const { searchValue } = this.props;
+    if (searchValue) {
+
+    }
   }
 
   renderTree() {
@@ -62,6 +63,7 @@ class SelectTrigger extends Component {
 
     return (
       <div className={renderTreetriggerPrefixCls}>
+        <div className={`${renderTreetriggerPrefixCls}-header`}>
         {search}
         {
           !allCheckBtn ? null :
@@ -74,14 +76,11 @@ class SelectTrigger extends Component {
               <span>全选</span>
             </label>
         }
-        {this.renderTreeBody()}
+        </div>
+        <div className={`${renderTreetriggerPrefixCls}-body`}>
+          {this.treeNodes}
+        </div>
       </div>
-    );
-  }
-
-  renderResultsTree() {
-    return (
-      <div>{this.treeNodes1}</div>
     );
   }
 
@@ -89,8 +88,9 @@ class SelectTrigger extends Component {
     const {
       triggerPrefixCls, resultsPanelAllClearBtn,
       resultsPanelTitleStyle, resultsPanelTitle,
+      treeNodesStates,
     } = this.props;
-    const { value } = this.state;
+
     const renderResultsPaneltriggerPrefixCls = `${triggerPrefixCls}-renderResultsPanel`;
 
     let renderRightDropdownTitle = null;
@@ -102,7 +102,7 @@ class SelectTrigger extends Component {
         </p>
       );
     }
-    const num = value.length || 0;
+    const num = treeNodesStates.checkedNodesPos.length || 0;
 
     const noContent = (<div
       className={`${renderResultsPaneltriggerPrefixCls}-noContent`}
@@ -118,26 +118,34 @@ class SelectTrigger extends Component {
 
     return (
       <div className={`${renderResultsPaneltriggerPrefixCls}`}>
-        <div>
-          <span className={`${renderResultsPaneltriggerPrefixCls}-fontS`}>已选择（{num}）</span>
-          {resultsPanelAllClearBtn && num ? clear : null}
+        <div className={`${renderResultsPaneltriggerPrefixCls}-header`}>
+          <div>
+            <span className={`${renderResultsPaneltriggerPrefixCls}-fontS`}>已选择（{num}）</span>
+            {resultsPanelAllClearBtn && num ? clear : null}
+          </div>
+          {renderRightDropdownTitle}
         </div>
-        {renderRightDropdownTitle}
-        {num === 0 ? noContent : this.renderResultsTree()}
+        {
+          num === 0 ? noContent :
+            <div className={`${renderResultsPaneltriggerPrefixCls}-body`}>
+              {this.treeNodes1}
+            </div>
+        }
       </div>
     );
   }
 
   render() {
-    const { triggerPrefixCls, treeData } = this.props;
+    const { triggerPrefixCls, treeData, locale } = this.props;
     let treeNodes;
     console.log(treeData);
-    const recursive = (treeDataBak, checked = true) =>
+    const recursive = (treeDataBak, treeCheckable = true) =>
       treeDataBak.map((treeNode) => {
         const props = {
           prefixCls: triggerPrefixCls,
           width: this.width,
-          treeCheckable: checked,
+          treeCheckable,
+          locale,
         };
         assign(props, treeNode);
         props.children = null;
@@ -145,7 +153,7 @@ class SelectTrigger extends Component {
         let ret;
         if (treeNode.children && treeNode.children.length > 0) {
           ret = (<TreeNode {...props} key={props.key}>
-              {recursive(treeNode.children, checked)}
+              {recursive(treeNode.children, treeCheckable)}
           </TreeNode>);
         } else {
           ret = <TreeNode {...props} key={props.key} />;
@@ -162,6 +170,8 @@ class SelectTrigger extends Component {
 
     // todo 
     this.treeNodes1 = recursive(treeData, false);
+
+    treeNodes = this.processTreeNode(treeNodes);
 
     return (
       <div
@@ -188,6 +198,8 @@ SelectTrigger.propTypes = {
     PropTypes.string, PropTypes.node,
   ]),
   treeData: PropTypes.array,
+  locale: PropTypes.string,
+  treeNodesStates: PropTypes.object,
 };
 
 export default SelectTrigger;

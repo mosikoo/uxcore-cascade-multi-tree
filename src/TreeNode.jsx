@@ -1,5 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import classnames from 'classnames';
+import i18n from './locale';
 
 class TreeNode extends Component {
   constructor(props) {
@@ -16,6 +17,28 @@ class TreeNode extends Component {
     console.log('checked', !this.props.checked);
   }
 
+  getLabelWidth(paddingLeft) {
+    const { width, children, treeCheckable, checked, locale } = this.props;
+    const paddindLeftWidth = parseInt(paddingLeft, 10);
+    let labelWidth;
+    const arrowWidth = children ? 18 : 0;
+    if (treeCheckable) {
+      // 总宽理论上为238
+      // 总宽 - paddingLeft的宽度 - 箭头宽度 - checkbox宽度 - 右边剩余宽度
+      labelWidth = `${width - paddindLeftWidth - arrowWidth - 18 - 24}px`;
+    } else {
+      const isAllWidth = children && checked ? 36 : 0;
+      // 英文造成的字体变化
+      const localeWidth = locale === 'en-us' ? 36 : 0;
+      // 总宽 - paddingLeft的宽度 - 箭头宽度 - 已全选宽度 - 右边剩余宽度
+      labelWidth = `${width - paddindLeftWidth - arrowWidth - isAllWidth - 46 - localeWidth}px`;
+    }
+
+    return {
+      maxWidth: labelWidth,
+    };
+  }
+
   expand() {
     this.setState({
       expand: !this.state.expand,
@@ -26,7 +49,6 @@ class TreeNode extends Component {
     const { expand } = this.state;
     const { label, value, children, prefixCls, disabled, treeCheckable, checked, level } = this.props;
     const treePrefixCls = `${prefixCls}-treeNode`;
-console.log(treeCheckable)
     const arrowCls = {
       'kuma-icon-triangle-right': !expand,
       'kuma-icon-triangle-down': expand,
@@ -34,12 +56,16 @@ console.log(treeCheckable)
     };
     const paddingLeftNum = treeCheckable ? 18 : 13;
     const style = {
-      paddingLeft: children ? `${level * 18}px` : `${level * 18 + paddingLeftNum}px`,
+      paddingLeft: children ? `${level * 18 + 16}px` : `${16 + level * 18 + paddingLeftNum}px`,
     };
-    // const style = {
-    //   paddingLeft: `${16 + (level -1) * 18}px`,
-    // };
 
+    const labelSpan = (<span
+      className={`${treePrefixCls}-label`}
+      title={label}
+      style={this.getLabelWidth(style.paddingLeft)}
+    >
+      {label}
+    </span>);
 
     return (
       <div>
@@ -60,21 +86,26 @@ console.log(treeCheckable)
                   checked={checked}
                   onChange={this.onChangeCheck}
                 /><s />
-                <span>{label}</span>
+                {labelSpan}
               </label> :
-              <span>{label}</span>
+              labelSpan
           }
           {
             !treeCheckable && checked && children ?
-              <span className={`${prefixCls}-allSelect`}>全选</span> : null
+              <span className={`${treePrefixCls}-allSelect`}>已全选</span> : null
+          }
+          {
+            // !treeCheckable && checked ?
+            !treeCheckable ?
+              <span
+                className={`${treePrefixCls}-clear`}
+                onClick={this.removeSelected}
+              >删除</span> :
+                null
           }
         </div>
         {
           expand && children ? children : null
-        }
-        {
-          !treeCheckable && checked ?
-            <span className={`${prefixCls}-clear`} onClick={this.removeSelected}>删除</span> : null
         }
       </div>
     );
@@ -96,6 +127,7 @@ TreeNode.propTypes = {
   checked: PropTypes.bool,
   level: PropTypes.number,
   width: PropTypes.number,
+  locale: PropTypes.string,
 };
 
 TreeNode.defaultProps = {
