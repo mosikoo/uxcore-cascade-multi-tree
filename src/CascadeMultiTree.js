@@ -26,7 +26,6 @@ class CascadeMultiTree extends React.Component {
     super(props);
 
     this.renderedTreeData = this.renderTreeData();
-    console.log( this.renderedTreeData, 'renderTreeData')
     const value = this.getValue(toArray(props.value || props.defaultValue));
     this.state = {
       value,
@@ -165,6 +164,7 @@ CascadeMultiTree.defaultProps = {
   resultsPanelTitleStyle: { color: 'red' },
   resultsPanelTitle: 'test title',
   showCheckedStrategy: SHOW_CHILD,
+  isFilterToRpfromSearch: true,
 };
 
 
@@ -199,6 +199,7 @@ CascadeMultiTree.propTypes = {
   showCheckedStrategy: PropTypes.oneOf([
     SHOW_ALL, SHOW_CHILD, SHOW_PARENT,
   ]),
+  isFilterToRpfromSearch: PropTypes.bool,
 };
 
 CascadeMultiTree.displayName = 'CascadeMultiTree';

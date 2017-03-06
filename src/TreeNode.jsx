@@ -95,8 +95,7 @@ class TreeNode extends Component {
               <span className={`${treePrefixCls}-allSelect`}>已全选</span> : null
           }
           {
-            // !treeCheckable && checked ?
-            !treeCheckable ?
+            !treeCheckable && checked ?
               <span
                 className={`${treePrefixCls}-clear`}
                 onClick={this.removeSelected}
