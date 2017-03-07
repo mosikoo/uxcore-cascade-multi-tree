@@ -33,7 +33,7 @@ class TreeNode extends Component {
       // 总宽 - paddingLeft的宽度 - 箭头宽度 - checkbox宽度 - 右边剩余宽度
       labelWidth = `${width - paddindLeftWidth - arrowWidth - 18 - 24}px`;
     } else {
-      const isAllWidth = children && checked ? 36 : 0;
+      const isAllWidth = children && checked ? 46 : 0;
       // 英文造成的字体变化
       const localeWidth = locale === 'en-us' ? 36 : 0;
       // 总宽 - paddingLeft的宽度 - 箭头宽度 - 已全选宽度 - 右边剩余宽度

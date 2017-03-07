@@ -60,12 +60,17 @@ class SelectTrigger extends Component {
   onValueChange(node, isAdd = false) {
     const { checkedNodes } = this.props.treeNodesStates;
     let vals = checkedNodes.map(item => item.value);
+    const pos = node.pos;
     if (isAdd) {
-        vals.push(node.value);
+      vals.push(node.value);
     } else {
-      vals = vals.filter(item => isInherit(val,));
-      vals.splice()
+      const poss = checkedNodes.map(item => item.pos)
+        .filter(item => !(isInherit(pos, item) || pos === item || isInherit(item, pos)));
+      vals = checkedNodes.filter(item => poss.indexOf(item.pos) > -1)
+        .map(item => item.value);
     }
+
+    console.log(vals, 'checkedvals');
     this.props.onChange(vals);
   }
 

@@ -82,7 +82,7 @@ export const loopTreeData = (data, level = 0) =>
  * 功能： 是否为上下级关系
  * isStrict 为 true，表示是绝对的父子关系
  */
-const isInherit = (parentPos, childPos, isStrict = false) => {
+export const isInherit = (parentPos, childPos, isStrict = false) => {
   const parentPosArr = parentPos.split('-');
   const childPosArr = childPos.split('-');
 

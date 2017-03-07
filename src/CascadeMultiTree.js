@@ -36,8 +36,11 @@ class CascadeMultiTree extends React.Component {
     this.onValueChange = this.onValueChange.bind(this);
   }
 
-  getContentDOMNode() {
-    return this.refs && this.refs.selection;
+  onValueChange(vals) {
+    const value = this.getValue(vals);
+    this.setState({
+      value,
+    });
   }
 
   getValue(value) {
@@ -48,8 +51,8 @@ class CascadeMultiTree extends React.Component {
     return this.treeNodesStates.checkedNodes;
   }
 
-  onValueChange(val, isAdd) {
-    const vals = this.state.value.map(item => item.value)
+  getContentDOMNode() {
+    return this.refs && this.refs.selection;
   }
 
   removeSigleValue(e) {
