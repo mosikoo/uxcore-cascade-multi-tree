@@ -33,10 +33,7 @@ class CascadeMultiTree extends React.Component {
 
     this.removeSigleValue = this.removeSigleValue.bind(this);
     this.getContentDOMNode = this.getContentDOMNode.bind(this);
-  }
-
-  componentDidMount() {
-
+    this.onValueChange = this.onValueChange.bind(this);
   }
 
   getContentDOMNode() {
@@ -51,6 +48,9 @@ class CascadeMultiTree extends React.Component {
     return this.treeNodesStates.checkedNodes;
   }
 
+  onValueChange(val, isAdd) {
+    const vals = this.state.value.map(item => item.value)
+  }
 
   removeSigleValue(e) {
     e.stopPropagation();
@@ -129,6 +129,7 @@ class CascadeMultiTree extends React.Component {
             treeNodesStates={this.treeNodesStates} // todo 缓存
             cacheTreeData={this.cacheTreeData} // todo 缓存
             {...this.props}
+            onChange={this.onValueChange}
           />
         }
         trigger={['click']}

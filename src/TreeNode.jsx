@@ -11,10 +11,16 @@ class TreeNode extends Component {
 
     this.onChangeCheck = this.onChangeCheck.bind(this);
     this.expand = this.expand.bind(this);
+    this.removeSelected = this.removeSelected.bind(this);
   }
 
   onChangeCheck() {
-    console.log('checked', !this.props.checked);
+    const { disabled, value, checked, onChange, pos } = this.props;
+    if (disabled) {
+      return;
+    }
+
+    onChange({ value, pos }, !checked);
   }
 
   getLabelWidth(paddingLeft) {
@@ -39,6 +45,12 @@ class TreeNode extends Component {
     };
   }
 
+  removeSelected() {
+    const { value, onChange, pos } = this.props;
+
+    onChange({ value, pos }, false);
+  }
+
   expand() {
     this.setState({
       expand: !this.state.expand,
@@ -47,7 +59,7 @@ class TreeNode extends Component {
 
   render() {
     const { expand } = this.state;
-    const { label, value, children, prefixCls, disabled, treeCheckable, checked, level } = this.props;
+    const { label, children, prefixCls, disabled, treeCheckable, checked, level } = this.props;
     const treePrefixCls = `${prefixCls}-treeNode`;
     const arrowCls = {
       'kuma-icon-triangle-right': !expand,
@@ -95,7 +107,7 @@ class TreeNode extends Component {
               <span className={`${treePrefixCls}-allSelect`}>已全选</span> : null
           }
           {
-            !treeCheckable && checked ?
+            !treeCheckable && checked && !disabled ?
               <span
                 className={`${treePrefixCls}-clear`}
                 onClick={this.removeSelected}
@@ -127,6 +139,8 @@ TreeNode.propTypes = {
   level: PropTypes.number,
   width: PropTypes.number,
   locale: PropTypes.string,
+  onChange: PropTypes.func,
+  pos: PropTypes.string,
 };
 
 TreeNode.defaultProps = {
@@ -135,6 +149,7 @@ TreeNode.defaultProps = {
   checked: false,
   level: 0,
   width: 240,
+  onChange() {},
 };
 
 export default TreeNode;

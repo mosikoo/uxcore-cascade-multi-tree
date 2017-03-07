@@ -1,7 +1,8 @@
 import React, { PropTypes, Component } from 'react';
 import assign from 'object-assign';
 import TreeNode from './TreeNode';
-import { toArray, loopTree, loopTreeNodes, flatToHierarchy, filterDulpNodePos } from './utils';
+import { toArray, loopTree, loopTreeNodes,
+  flatToHierarchy, filterDulpNodePos, isInherit } from './utils';
 
 
 class SelectTrigger extends Component {
@@ -13,6 +14,7 @@ class SelectTrigger extends Component {
     };
     this.onChangeInput = this.onChangeInput.bind(this);
     this.onChangeCheckAll = this.onChangeCheckAll.bind(this);
+    this.onValueChange = this.onValueChange.bind(this);
 
     this.width = props.dropdownMatchSelectWidth ?
       props.getContentDOMNode().offsetWidth : 240;
@@ -52,6 +54,21 @@ class SelectTrigger extends Component {
     });
   }
 
+  /*
+   * 回调改变value
+   */
+  onValueChange(node, isAdd = false) {
+    const { checkedNodes } = this.props.treeNodesStates;
+    let vals = checkedNodes.map(item => item.value);
+    if (isAdd) {
+        vals.push(node.value);
+    } else {
+      vals = vals.filter(item => isInherit(val,));
+      vals.splice()
+    }
+    this.props.onChange(vals);
+  }
+
   buildOriginTree(newprops) {
     const propsbak = newprops || this.props;
     const { triggerPrefixCls, locale, treeData } = propsbak;
@@ -62,6 +79,7 @@ class SelectTrigger extends Component {
           prefixCls: triggerPrefixCls,
           width: this.width,
           locale,
+          onChange: this.onValueChange,
         };
         assign(props, treeNode);
         props.children = null;
@@ -148,7 +166,7 @@ class SelectTrigger extends Component {
         return React.cloneElement(node, propsbak);
       });
 
-      return recursive(hierarchyNodes);
+    return recursive(hierarchyNodes);
   }
 
   renderTree(treeNodes) {
@@ -305,6 +323,7 @@ SelectTrigger.propTypes = {
   locale: PropTypes.string,
   treeNodesStates: PropTypes.object,
   isFilterToRpfromSearch: PropTypes.bool,
+  onChange: PropTypes.func,
 };
 
 export default SelectTrigger;
