@@ -226,14 +226,100 @@
   }
 }
 
+// test todo
 .testhalfChecked {
   background: url("@{svg-path}/radio-normal.svg") no-repeat;
   display: inline-block;
   width: 16px;
   height: 16px;
-
-
 }
+
+// input显示层动画
+.effect() {
+  animation-duration: .3s;
+  animation-fill-mode: both;
+  transform-origin: 0 0;
+}
+
+.@{__select-tree-prefix-cls}-selection__choice {
+  background-color: #f3f3f3;
+  border-radius: 4px;
+  float: left;
+  padding: 0 15px;
+  margin-right: 4px;
+  position: relative;
+  overflow: hidden;
+  transition: padding .3s cubic-bezier(0.6, -0.28, 0.735, 0.045), width .3s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+
+  &__content {
+    margin-left: 0;
+    margin-right: 0;
+    transition: margin .3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+
+  &-zoom-enter, &-zoom-appear, &-zoom-leave {
+    .effect();
+    opacity: 0;
+    animation-play-state: paused;
+    animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  &-zoom-leave {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.6, -0.28, 0.735, 0.045);
+  }
+
+  &-zoom-enter.@{__select-tree-prefix-cls}-selection__choice-zoom-enter-active,
+  &-zoom-appear.@{__select-tree-prefix-cls}-selection__choice-zoom-appear-active {
+    animation-play-state: running;
+    animation-name: rcSelectChoiceZoomIn;
+  }
+
+  &-zoom-leave.@{__select-tree-prefix-cls}-selection__choice-zoom-leave-active {
+    animation-play-state: running;
+    animation-name: rcSelectChoiceZoomOut;
+  }
+
+  @keyframes rcSelectChoiceZoomIn {
+    0% {
+      transform: scale(0.6);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes rcSelectChoiceZoomOut {
+    to {
+      transform: scale(0);
+      opacity: 0;
+    }
+  }
+
+  &__remove {
+    color: #919191;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 0 4px 0 0;
+    position: absolute;
+    opacity: 0;
+    transform: scale(0);
+    top: 0;
+    right: 2px;
+    transition: opacity .3s, transform .3s;
+    &:before {
+      content: '×'
+    }
+
+    &:hover {
+      color: #333;
+    }
+  }
+}
+
+
 
 
 

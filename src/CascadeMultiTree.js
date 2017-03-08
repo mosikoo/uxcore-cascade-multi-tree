@@ -9,7 +9,7 @@ import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import Dropdown from 'uxcore-dropdown';
 import SelectTrigger from './SelectTrigger';
-import TreeNode from './TreeNode.jsx';
+import Animate from 'rc-animate';
 
 import {
   UNSELECTABLE_STYLE, UNSELECTABLE_ATTRIBUTE, preventDefaultEvent,
@@ -73,7 +73,7 @@ class CascadeMultiTree extends React.Component {
 
   renderTopControlNode() {
     const { value, open } = this.state;
-    const { prefixCls, maxTagTextLength, disabled, className } = this.props;
+    const { prefixCls, maxTagTextLength, disabled, className, choiceTransitionName } = this.props;
     const rootCls = {
       [className]: !!className,
       [prefixCls]: 1,
@@ -113,7 +113,13 @@ class CascadeMultiTree extends React.Component {
         key="selection"
         ref="selection"
       >
-        <ul className={ulCls}>{selectedValueNodes}</ul>
+        <Animate
+          className={ulCls}
+          component="ul"
+          transitionName={choiceTransitionName}
+        >
+          {selectedValueNodes}
+        </Animate>
       </div>
     );
   }
@@ -169,6 +175,7 @@ CascadeMultiTree.defaultProps = {
   resultsPanelTitle: 'test title',
   showCheckedStrategy: SHOW_CHILD,
   isFilterToRpfromSearch: true,
+  choiceTransitionName: 'uxcore-cascade-multi-tree-selection__choice-zoom',
 };
 
 
@@ -204,6 +211,7 @@ CascadeMultiTree.propTypes = {
     SHOW_ALL, SHOW_CHILD, SHOW_PARENT,
   ]),
   isFilterToRpfromSearch: PropTypes.bool,
+  choiceTransitionName: PropTypes.string,
 };
 
 CascadeMultiTree.displayName = 'CascadeMultiTree';
