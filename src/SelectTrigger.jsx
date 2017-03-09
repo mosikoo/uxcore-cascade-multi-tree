@@ -1,6 +1,8 @@
 import React, { PropTypes, Component } from 'react';
 import assign from 'object-assign';
+import classnames from 'classnames';
 import TreeNode from './TreeNode';
+import i18n from './locale';
 import { toArray, loopTree, loopTreeNodes,
   flatToHierarchy, filterDulpNodePos, isInherit } from './utils';
 
@@ -175,7 +177,7 @@ class SelectTrigger extends Component {
   }
 
   renderTree(treeNodes) {
-    const { triggerPrefixCls, showSearch, allCheckBtn, searchPlaceholder } = this.props;
+    const { triggerPrefixCls, showSearch, allCheckBtn, searchPlaceholder, locale } = this.props;
     const { searchValue, allChecked } = this.state;
     const renderTreetriggerPrefixCls = `${triggerPrefixCls}-renderTree`;
     const notFount = (<span>notFount</span>);
@@ -187,7 +189,7 @@ class SelectTrigger extends Component {
           role="textbox"
           value={searchValue}
           onChange={this.onChangeInput}
-          placeholder={searchPlaceholder}
+          placeholder={searchPlaceholder || i18n[locale].searchPlaceholder}
         />
       </div>;
 
@@ -203,7 +205,7 @@ class SelectTrigger extends Component {
                 checked={allChecked} onChange={this.onChangeCheckAll}
               />
               <s />
-              <span>全选</span>
+              <span>{i18n[locale].all}</span>
             </label>
         }
         </div>
@@ -218,7 +220,7 @@ class SelectTrigger extends Component {
     const {
       triggerPrefixCls, resultsPanelAllClearBtn,
       resultsPanelTitleStyle, resultsPanelTitle,
-      treeNodesStates,
+      treeNodesStates, locale,
     } = this.props;
 
     const renderResultsPaneltriggerPrefixCls = `${triggerPrefixCls}-renderResultsPanel`;
@@ -237,20 +239,22 @@ class SelectTrigger extends Component {
     const noContent = (<div
       className={`${renderResultsPaneltriggerPrefixCls}-noContent`}
     >
-      请从左侧选择
+      {i18n[locale].selectFromLeft}
     </div>);
     const clear = (<span
       key="rightDropdownAllclear"
       className={`${renderResultsPaneltriggerPrefixCls}-allClear`}
       onClick={this.onResultsPanelAllClear}
-    >清空</span>);
+    >{i18n[locale].clear}</span>);
 
 
     return (
       <div className={`${renderResultsPaneltriggerPrefixCls}`}>
         <div className={`${renderResultsPaneltriggerPrefixCls}-header`}>
           <div>
-            <span className={`${renderResultsPaneltriggerPrefixCls}-fontS`}>已选择（{num}）</span>
+            <span className={`${renderResultsPaneltriggerPrefixCls}-fontS`}>
+              {i18n[locale].haveChose}（{num}）
+            </span>
             {resultsPanelAllClearBtn && num ? clear : null}
           </div>
           {renderRightDropdownTitle}
@@ -303,7 +307,7 @@ class SelectTrigger extends Component {
     return (
       <div
         ref={(s) => { this.trigger = s; }}
-        className={`${triggerPrefixCls}-dropdown`}
+        className={classnames(`${triggerPrefixCls}-dropdown`, 'use-svg')}
       >
         {this.renderTree(treeNodes)}
         {this.renderResultsPanel(resultPanelTreeNodes)}

@@ -59,7 +59,10 @@ class TreeNode extends Component {
 
   render() {
     const { expand } = this.state;
-    const { label, children, prefixCls, disabled, treeCheckable, checked, level } = this.props;
+    const {
+      label, children, prefixCls, disabled, locale,
+      treeCheckable, checked, level, halfChecked,
+    } = this.props;
     const treePrefixCls = `${prefixCls}-treeNode`;
     const arrowCls = {
       'kuma-icon-triangle-right': !expand,
@@ -79,6 +82,12 @@ class TreeNode extends Component {
       {label}
     </span>);
 
+    const iconCls = {
+      'kuma-tree-checkbox': true,
+      'kuma-tree-checkbox-checked': checked,
+      'kuma-tree-checkbox-indeterminate': halfChecked,
+    };
+
     return (
       <div>
         <div style={style} className={treePrefixCls}>
@@ -92,26 +101,24 @@ class TreeNode extends Component {
           {
             treeCheckable ?
               <label className="kuma-form-text">
-                <input
-                  className="kuma-checkbox"
-                  type="checkbox"
-                  checked={checked}
-                  onChange={this.onChangeCheck}
-                /><s />
+                <s
+                  className={classnames(iconCls)}
+                  onClick={this.onChangeCheck}
+                />
                 {labelSpan}
               </label> :
               labelSpan
           }
           {
             !treeCheckable && checked && children ?
-              <span className={`${treePrefixCls}-allSelect`}>已全选</span> : null
+              <span className={`${treePrefixCls}-allSelect`}>{i18n[locale].haveAll}</span> : null
           }
           {
             !treeCheckable && checked && !disabled ?
               <span
                 className={`${treePrefixCls}-clear`}
                 onClick={this.removeSelected}
-              >删除</span> :
+              >{i18n[locale].delete}</span> :
                 null
           }
         </div>
@@ -141,6 +148,7 @@ TreeNode.propTypes = {
   locale: PropTypes.string,
   onChange: PropTypes.func,
   pos: PropTypes.string,
+  halfChecked: PropTypes.bool,
 };
 
 TreeNode.defaultProps = {
@@ -150,6 +158,7 @@ TreeNode.defaultProps = {
   level: 0,
   width: 240,
   onChange() {},
+  halfChecked: false,
 };
 
 export default TreeNode;

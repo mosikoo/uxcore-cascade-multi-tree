@@ -27,6 +27,14 @@
     list-style: none;
   }
 
+  &-placeholder {
+    display: inline-block;
+    height: 34px;
+    margin-left: 5px;
+    line-height: 34px;
+    color: #aaa;
+  }
+
   ul&-selection-rendered {
     padding-bottom: 2px;
     padding-left: 8px;
@@ -219,19 +227,14 @@
     margin-right: 4px;
     vertical-align: middle;
   }
+  .kuma-checkbox[type="checkbox"] + s:hover, .kuma-checkbox.checkbox-primary[type="checkbox"] + s:hover {
+    background: auto;
+  }
   &-allSelect {
     font-family: PingFangSC-Regular;
     color: #999999;
     margin-left: 12px;
   }
-}
-
-// test todo
-.testhalfChecked {
-  background: url("@{svg-path}/radio-normal.svg") no-repeat;
-  display: inline-block;
-  width: 16px;
-  height: 16px;
 }
 
 // input显示层动画

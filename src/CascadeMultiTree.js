@@ -8,8 +8,9 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import Dropdown from 'uxcore-dropdown';
-import SelectTrigger from './SelectTrigger';
 import Animate from 'rc-animate';
+import SelectTrigger from './SelectTrigger';
+import i18n from './locale';
 
 import {
   UNSELECTABLE_STYLE, UNSELECTABLE_ATTRIBUTE, preventDefaultEvent,
@@ -73,7 +74,10 @@ class CascadeMultiTree extends React.Component {
 
   renderTopControlNode() {
     const { value, open } = this.state;
-    const { prefixCls, maxTagTextLength, disabled, className, choiceTransitionName } = this.props;
+    const {
+      prefixCls, maxTagTextLength, disabled,
+      className, choiceTransitionName, locale,
+    } = this.props;
     const rootCls = {
       [className]: !!className,
       [prefixCls]: 1,
@@ -81,6 +85,9 @@ class CascadeMultiTree extends React.Component {
       [`${prefixCls}-disabled`]: disabled,
       [`${prefixCls}-enabled`]: !disabled,
     };
+    const placeholder = (<span className={`${prefixCls}-placeholder`}>
+      {i18n[locale].pullDownSelect}
+    </span>);
 
     const selectedValueNodes = value.map((singleValue) => {
       let content = singleValue.label;
@@ -113,13 +120,16 @@ class CascadeMultiTree extends React.Component {
         key="selection"
         ref="selection"
       >
-        <Animate
-          className={ulCls}
-          component="ul"
-          transitionName={choiceTransitionName}
-        >
-          {selectedValueNodes}
-        </Animate>
+        {
+          value.length === 0 ? placeholder :
+            <Animate
+              className={ulCls}
+              component="ul"
+              transitionName={choiceTransitionName}
+            >
+              {selectedValueNodes}
+            </Animate>
+        }
       </div>
     );
   }
@@ -163,14 +173,13 @@ CascadeMultiTree.defaultProps = {
   notFoundContent: '',
   allowClear: true,
   disabled: false,
-  locale: 'zh-cn',
+  locale: 'en-us',
   onSelect: noop,
   onItemClick: noop,
   dropdownMatchSelectWidth: false,
   showSearch: true,
   allCheckBtn: true,
   resultsPanelAllClearBtn: true,
-  searchPlaceholder: '请输入搜索名称',
   resultsPanelTitleStyle: { color: 'red' },
   resultsPanelTitle: 'test title',
   showCheckedStrategy: SHOW_CHILD,

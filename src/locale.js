@@ -8,6 +8,8 @@ const locale = {
     cancel: '取消',
     selectFromLeft: '请从左侧选择',
     haveChose: '已选择',
+    searchPlaceholder: '请输入搜索名称',
+    pullDownSelect: '请下拉选择',
   },
   'en-us': {
     clear: 'Clean',
@@ -16,8 +18,10 @@ const locale = {
     delete: 'Delete',
     ok: 'Ok',
     cancel: 'Cancel',
-    selectFromLeft: '请从左侧选择',
+    selectFromLeft: 'Select from the left panel',
     haveChose: 'Selected',
+    searchPlaceholder: 'Please input the search name',
+    pullDownSelect: 'Please pull down and select ',
   },
 };
 
