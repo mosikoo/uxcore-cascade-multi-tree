@@ -15,8 +15,15 @@ class Demo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-
+      value: ['shangcheng', 'zhonghuamen', 'nanjing'],
     };
+
+    this.onChange = this.onChange.bind(this);
+  }
+
+  onChange(value, nodes) {
+    console.log('demo中的回调', value, nodes);
+    this.setState({ value });
   }
 
   render() {
@@ -27,8 +34,9 @@ class Demo extends React.Component {
           resultsPanelTitleStyle={{ color: '#888' }}
           resultsPanelTitle="test title"
           options={options}
-          value={['shangcheng', 'zhonghuamen', 'nanjing']}
-          showCheckedStrategy={'SHOW_ALL'}
+          value={this.state.value}
+          showCheckedStrategy={'SHOW_PARENT'}
+          onChange={this.onChange}
         />
       </div>
     );

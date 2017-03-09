@@ -14,7 +14,7 @@ import i18n from './locale';
 
 import {
   UNSELECTABLE_STYLE, UNSELECTABLE_ATTRIBUTE, preventDefaultEvent,
-  SHOW_ALL, SHOW_CHILD, SHOW_PARENT, toArray, isInherit,
+  SHOW_ALL, SHOW_CHILD, SHOW_PARENT, toArray, isInherit, isEquelOfTwoValues,
   getTreeNodesStates, loopTreeData, filterNodesfromStrategy,
 } from './utils';
 
@@ -41,10 +41,17 @@ class CascadeMultiTree extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.renderedTreeData = this.renderTreeData(nextProps);
-    const value = this.getValue(toArray(nextProps.value));
-    this.state = {
-      value,
-    };
+    const { showCheckedStrategy } = this.props;
+
+    if ('value' in nextProps) {
+      // 判断value与目前的value是否相等
+      if (!(this.cacheTreeData &&
+        isEquelOfTwoValues(nextProps.value, this.treeNodesStates, showCheckedStrategy))
+      ) {
+        const value = this.getValue(toArray(nextProps.value));
+        this.setState({ value });
+      }
+    }
 
     if ('open' in nextProps) {
       this.setState({
@@ -53,8 +60,12 @@ class CascadeMultiTree extends React.Component {
     }
   }
 
+  /*
+   * 改变value，进行回调
+   */
   onValueChange(vals) {
     const value = this.getValue(vals);
+    this.sortOutValue(value);
     this.setState({
       value,
     });
@@ -72,6 +83,14 @@ class CascadeMultiTree extends React.Component {
 
   getContentDOMNode() {
     return this.refs && this.refs.selection;
+  }
+
+  sortOutValue(value) {
+    const { showCheckedStrategy } = this.props;
+    const showNodes = filterNodesfromStrategy(value, showCheckedStrategy);
+    const vals = showNodes.map(item => item.value);
+
+    this.props.onChange(vals, showNodes);
   }
 
   removeSigleValue(e, node) {
@@ -186,9 +205,9 @@ class CascadeMultiTree extends React.Component {
             triggerPrefixCls={prefixCls}
             getContentDOMNode={this.getContentDOMNode}
             dropdownMatchSelectWidth={dropdownMatchSelectWidth}
-            treeData={this.renderedTreeData} // todo 缓存
-            treeNodesStates={this.treeNodesStates} // todo 缓存
-            cacheTreeData={this.cacheTreeData} // todo 缓存
+            treeData={this.renderedTreeData}
+            treeNodesStates={this.treeNodesStates}
+            cacheTreeData={this.cacheTreeData}
             {...this.props}
             onChange={this.onValueChange}
             onVisibleChange={this.onVisibleChange}
@@ -229,6 +248,7 @@ CascadeMultiTree.defaultProps = {
   showCheckedStrategy: SHOW_CHILD,
   isFilterToRpfromSearch: true,
   choiceTransitionName: 'uxcore-cascade-multi-tree-selection__choice-zoom',
+  onChange: noop,
 };
 
 
@@ -265,6 +285,7 @@ CascadeMultiTree.propTypes = {
   ]),
   isFilterToRpfromSearch: PropTypes.bool,
   choiceTransitionName: PropTypes.string,
+  onChange: PropTypes.func,
 };
 
 CascadeMultiTree.displayName = 'CascadeMultiTree';

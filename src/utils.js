@@ -299,3 +299,55 @@ export const getTreeNodesStates = (treeData, vals) => {
     checkedNodes, checkedNodesPos, halfCheckedNodesPos, allNodes: treeNodesStates,
   };
 };
+
+/*
+ * 比较传入的value与现有的value是否相等
+ */
+const isEquelArr = (oneA, twoB) => {
+  if (oneA.length !== twoB.length) {
+    return false;
+  }
+  let isEquel = true;
+  oneA.forEach(item => {
+    if (twoB.indexOf(item) === -1) {
+      isEquel = false;
+      return;
+    }
+  });
+
+  return isEquel;
+};
+
+export const isEquelOfTwoValues =
+  (curVals, treeNodesStates, showCheckedStrategy) => {
+    const { allNodes, checkedNodes, checkedNodesPos } = treeNodesStates;
+    const curPoss = [];
+    Object.keys(allNodes).forEach(key => {
+      if (curVals.indexOf(allNodes[key].value) > -1) {
+        curPoss.push(key);
+      }
+    });
+
+    if (checkedNodesPos.length < curPoss.length) {
+      return false;
+    }
+    if (showCheckedStrategy === SHOW_ALL) {
+      return isEquelArr(curPoss, checkedNodesPos);
+    }
+
+    if (showCheckedStrategy === SHOW_PARENT) {
+      const parentPos = filterDulpNodePos(checkedNodesPos);
+      return isEquelArr(curPoss, parentPos);
+    }
+    if (showCheckedStrategy === SHOW_CHILD) {
+      const childPos = checkedNodes.filter(item => item.childrenLen === 0)
+        .map(item => item.pos);
+
+      return isEquelArr(curPoss, childPos);
+    }
+
+    return false;
+  };
+
+
+

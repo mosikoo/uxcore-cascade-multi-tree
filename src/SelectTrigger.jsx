@@ -28,7 +28,6 @@ class SelectTrigger extends Component {
 
   componentWillMount() {
     this.treeOriginNodes = this.buildOriginTree();
-    console.log(this.treeOriginNodes, 'treeOriginNodes');
   }
 
   componentDidMount() {
@@ -86,7 +85,6 @@ class SelectTrigger extends Component {
         .map(item => item.value);
     }
 
-    console.log(vals, 'checkedvals');
     this.props.onChange(vals);
   }
 
