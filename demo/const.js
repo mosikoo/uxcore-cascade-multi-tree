@@ -30,6 +30,7 @@ export const options = [{
         {
           value: 'subei',
           label: '7苏北苏北苏北苏北苏北苏北苏北苏北苏北',
+          disabled: true,
         },
       ],
     },

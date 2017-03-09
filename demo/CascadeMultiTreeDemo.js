@@ -24,8 +24,11 @@ class Demo extends React.Component {
       <div style={{ margin: '20px' }}>
         <h2>test Demo</h2>
         <CascadeMultiTree
+          resultsPanelTitleStyle={{ color: '#888' }}
+          resultsPanelTitle="test title"
           options={options}
           value={['shangcheng', 'zhonghuamen', 'nanjing']}
+          showCheckedStrategy={'SHOW_ALL'}
         />
       </div>
     );

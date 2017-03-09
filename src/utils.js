@@ -201,13 +201,13 @@ export const getTreeNodesStates = (treeData, vals) => {
   let checkedNodesPos = [];
   const treeNodesStates = {};
   const allPos = [];
-  const halfCheckedNodes = [];
+  const halfCheckedNodesPos = [];
   const allPosBakForFilterHalf = []; // 用于筛选halfCheckNodes
   loopTree(treeData, (props) => {
-    const { pos, value, label, childrenLen } = props;
+    const { pos, value, label, childrenLen, disabled } = props;
     treeNodesStates[pos] = {
       pos, value, label,
-      childrenLen,
+      childrenLen, disabled,
     };
     allPos.push(pos);
     if (childrenLen !== 0) {
@@ -279,7 +279,7 @@ export const getTreeNodesStates = (treeData, vals) => {
     for (let i = 0; i < allPosBakForFilterHalf.length;) {
       const targetPos = allPosBakForFilterHalf[i];
       if (isInherit(targetPos, item)) {
-        halfCheckedNodes.push(targetPos);
+        halfCheckedNodesPos.push(targetPos);
         allPosBakForFilterHalf.splice(i, 1);
       } else {
         i += 1;
@@ -294,8 +294,8 @@ export const getTreeNodesStates = (treeData, vals) => {
     return null;
   }).filter(p => p);
 
-  console.log(checkedNodesPos, halfCheckedNodes, checkedNodes);
+  console.log(checkedNodesPos, halfCheckedNodesPos, checkedNodes);
   return {
-    checkedNodes, checkedNodesPos, halfCheckedNodes,
+    checkedNodes, checkedNodesPos, halfCheckedNodesPos, allNodes: treeNodesStates,
   };
 };

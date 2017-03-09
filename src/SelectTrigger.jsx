@@ -21,6 +21,9 @@ class SelectTrigger extends Component {
 
     this.width = props.dropdownMatchSelectWidth ?
       props.getContentDOMNode().offsetWidth : 240;
+
+    const { allNodes, checkedNodes } = props.treeNodesStates;
+    this.allChecked = Object.keys(allNodes).length === checkedNodes.length;
   }
 
   componentWillMount() {
@@ -36,6 +39,8 @@ class SelectTrigger extends Component {
     if (!(nextProps.cacheTreeData && this.treeOriginNodes)) {
       this.treeOriginNodes = this.buildOriginTree(nextProps);
     }
+    const { allNodes, checkedNodes } = nextProps.treeNodesStates;
+    this.allChecked = Object.keys(allNodes).length === checkedNodes.length;
   }
 
   /*
@@ -52,20 +57,17 @@ class SelectTrigger extends Component {
   }
 
   onChangeCheckAll() {
-    const { allChecked } = this.state;
     const { treeData, onChange } = this.props;
-    this.setState({
-      allChecked: !allChecked,
-    });
-    const vals = allChecked ? [] :
+    const vals = this.allChecked ? [] :
       treeData.map(item => item.value);
 
     onChange(vals);
   }
 
   onResultsPanelAllClear() {
-    const { onChange } = this.props;
+    const { onChange, onVisibleChange } = this.props;
     onChange([]);
+    onVisibleChange(false);
   }
 
   /*
@@ -190,7 +192,7 @@ class SelectTrigger extends Component {
 
   renderTree(treeNodes) {
     const { triggerPrefixCls, showSearch, allCheckBtn, searchPlaceholder, locale } = this.props;
-    const { searchValue, allChecked } = this.state;
+    const { searchValue } = this.state;
     const renderTreetriggerPrefixCls = `${triggerPrefixCls}-renderTree`;
     const notFound = (<span className={`${renderTreetriggerPrefixCls}-notFound`}>
       {i18n[locale].notFount}
@@ -205,10 +207,11 @@ class SelectTrigger extends Component {
           onChange={this.onChangeInput}
           placeholder={searchPlaceholder || i18n[locale].searchPlaceholder}
         />
+        <i className="kuma-icon kuma-icon-search"></i>
       </div>;
     const checkboxCls = {
       [`${triggerPrefixCls}-checkbox`]: true,
-      [`${triggerPrefixCls}-checkbox-checked`]: allChecked,
+      [`${triggerPrefixCls}-checkbox-checked`]: this.allChecked,
     };
 
     return (
@@ -286,7 +289,7 @@ class SelectTrigger extends Component {
   render() {
     const { triggerPrefixCls, treeNodesStates, isFilterToRpfromSearch } = this.props;
     const { searchValue } = this.state;
-    const { checkedNodesPos, halfCheckedNodes } = treeNodesStates;
+    const { checkedNodesPos, halfCheckedNodesPos } = treeNodesStates;
     let treeNodes;
 
     const recursive = children =>
@@ -294,7 +297,7 @@ class SelectTrigger extends Component {
         const props = assign({}, child.props);
         if (checkedNodesPos.indexOf(props.pos) > -1) {
           props.checked = true;
-        } else if (halfCheckedNodes.indexOf(props.pos) > -1) {
+        } else if (halfCheckedNodesPos.indexOf(props.pos) > -1) {
           props.halfChecked = true;
         }
         if (child.props.children) {
@@ -347,6 +350,7 @@ SelectTrigger.propTypes = {
   treeNodesStates: PropTypes.object,
   isFilterToRpfromSearch: PropTypes.bool,
   onChange: PropTypes.func,
+  onVisibleChange: PropTypes.func,
 };
 
 export default SelectTrigger;

@@ -14,7 +14,7 @@ import i18n from './locale';
 
 import {
   UNSELECTABLE_STYLE, UNSELECTABLE_ATTRIBUTE, preventDefaultEvent,
-  SHOW_ALL, SHOW_CHILD, SHOW_PARENT, toArray,
+  SHOW_ALL, SHOW_CHILD, SHOW_PARENT, toArray, isInherit,
   getTreeNodesStates, loopTreeData, filterNodesfromStrategy,
 } from './utils';
 
@@ -30,11 +30,27 @@ class CascadeMultiTree extends React.Component {
     const value = this.getValue(toArray(props.value || props.defaultValue));
     this.state = {
       value,
+      open: false,
     };
 
     this.removeSigleValue = this.removeSigleValue.bind(this);
     this.getContentDOMNode = this.getContentDOMNode.bind(this);
     this.onValueChange = this.onValueChange.bind(this);
+    this.onVisibleChange = this.onVisibleChange.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.renderedTreeData = this.renderTreeData(nextProps);
+    const value = this.getValue(toArray(nextProps.value));
+    this.state = {
+      value,
+    };
+
+    if ('open' in nextProps) {
+      this.setState({
+        open: nextProps.open,
+      });
+    }
   }
 
   onValueChange(vals) {
@@ -42,6 +58,10 @@ class CascadeMultiTree extends React.Component {
     this.setState({
       value,
     });
+  }
+
+  onVisibleChange(open) {
+    this.setState({ open });
   }
 
   getValue(value) {
@@ -54,7 +74,14 @@ class CascadeMultiTree extends React.Component {
     return this.refs && this.refs.selection;
   }
 
-  removeSigleValue(e) {
+  removeSigleValue(e, node) {
+    const { value } = this.state;
+    const pos = node.pos;
+    const poss = value.map(item => item.pos)
+      .filter(item => !(isInherit(pos, item) || pos === item || isInherit(item, pos)));
+    const vals = value.filter(item => poss.indexOf(item.pos) > -1)
+        .map(item => item.value);
+    this.onValueChange(vals);
     e.stopPropagation();
   }
 
@@ -84,32 +111,43 @@ class CascadeMultiTree extends React.Component {
       [`${prefixCls}-disabled`]: disabled,
       [`${prefixCls}-enabled`]: !disabled,
     };
-    const placeholder = (<span className={`${prefixCls}-placeholder`}>
-      {i18n[locale].pullDownSelect}
-    </span>);
 
     const showVals = filterNodesfromStrategy(value, showCheckedStrategy);
-    const selectedValueNodes = showVals.map((singleValue) => {
+    let selectedValueNodes = showVals.map((singleValue) => {
       let content = singleValue.label;
       if (maxTagTextLength && typeof content === 'string' && content.length > maxTagTextLength) {
         content = `${content.slice(0, maxTagTextLength)}...`;
       }
+      const liCls = {
+        [`${prefixCls}-selection-choice`]: true,
+        [`${prefixCls}-selection-choice-disabled`]: disabled || singleValue.disabled,
+      };
+
       return (
         <li
           key={singleValue.value}
           style={UNSELECTABLE_STYLE}
           {...UNSELECTABLE_ATTRIBUTE}
           onMouseDown={preventDefaultEvent}
-          className={`${prefixCls}-selection-choice`}
+          className={classnames(liCls)}
         >
-          <span
-            className={`${prefixCls}-selection-choice-remove`}
-            onClick={this.removeSigleValue}
-          />
+        {
+          disabled || singleValue.disabled ? null :
+            <span
+              className={`${prefixCls}-selection-choice-remove`}
+              onClick={(e) => this.removeSigleValue(e, singleValue)}
+            />
+        }
           <span className={`${prefixCls}-selection-choice-content`}>{content}</span>
         </li>
       );
     });
+
+    if (value.length === 0) {
+      selectedValueNodes = (<li><span className={`${prefixCls}-placeholder`}>
+        {i18n[locale].pullDownSelect}
+      </span></li>);
+    }
 
     const ulCls = `${prefixCls}-selection-rendered`;
 
@@ -120,22 +158,26 @@ class CascadeMultiTree extends React.Component {
         key="selection"
         ref="selection"
       >
-        {
-          value.length === 0 ? placeholder :
-            <Animate
-              className={ulCls}
-              component="ul"
-              transitionName={choiceTransitionName}
-            >
-              {selectedValueNodes}
-            </Animate>
-        }
+        <Animate
+          className={ulCls}
+          component="ul"
+          transitionName={choiceTransitionName}
+        >
+          {selectedValueNodes}
+        </Animate>
+
+
       </div>
     );
   }
 
   render() {
-    const { prefixCls, dropdownMatchSelectWidth } = this.props;
+    const { prefixCls, dropdownMatchSelectWidth, disabled } = this.props;
+    const { open } = this.state;
+
+    if (disabled) {
+      return this.renderTopControlNode();
+    }
 
     return (
       <Dropdown
@@ -149,8 +191,11 @@ class CascadeMultiTree extends React.Component {
             cacheTreeData={this.cacheTreeData} // todo 缓存
             {...this.props}
             onChange={this.onValueChange}
+            onVisibleChange={this.onVisibleChange}
           />
         }
+        onVisibleChange={this.onVisibleChange}
+        visible={open}
         trigger={['click']}
       >
         {this.renderTopControlNode()}
@@ -180,9 +225,8 @@ CascadeMultiTree.defaultProps = {
   showSearch: true,
   allCheckBtn: true,
   resultsPanelAllClearBtn: true,
-  resultsPanelTitleStyle: { color: '#eee' },
-  resultsPanelTitle: 'test title',
-  showCheckedStrategy: SHOW_PARENT,
+  resultsPanelTitleStyle: {},
+  showCheckedStrategy: SHOW_CHILD,
   isFilterToRpfromSearch: true,
   choiceTransitionName: 'uxcore-cascade-multi-tree-selection__choice-zoom',
 };
