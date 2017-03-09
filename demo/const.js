@@ -17,6 +17,7 @@ export const options = [{
 }, {
   value: 'jiangsu',
   label: '4江苏',
+  disabled: true,
   children: [
     {
       value: 'nanjing',

@@ -64,6 +64,7 @@ export const loopTreeData = (data, level = 0) =>
       label: item.label || item.value,
       key: item.key || pos,
       pos,
+      disabled: item.disabled || false,
       level: pos.split('-').length - 2,
       childrenLen: item.children && item.children.length || 0,
     };
@@ -129,6 +130,23 @@ export const filterDulpNodePos = (posArrs) => {
 
   return nPos;
 };
+
+/*
+ * 根据不同策略筛选不同的节点
+ */
+export const filterNodesfromStrategy = (vals, strategy) => {
+  if (vals.length === 0 || strategy === SHOW_ALL) {
+    return vals || [];
+  }
+  const poss = vals.map(item => item.pos);
+  if (strategy === SHOW_PARENT) {
+    const showPoss = filterDulpNodePos(poss);
+    return vals.filter(val => showPoss.indexOf(val.pos) > -1);
+  }
+
+  return vals.filter(val => val.childrenLen === 0);
+};
+
 
 /*
  * @params: object{pos: node, ...}

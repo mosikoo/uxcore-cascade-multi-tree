@@ -21,6 +21,7 @@
   border: 1px solid #ccc;
   min-width: 120px;
   width: 300px;
+  cursor: default;
   ul, li {
     margin: 0;
     padding: 0;
@@ -235,6 +236,41 @@
     color: #999999;
     margin-left: 12px;
   }
+}
+
+//checkbox渲染
+.use-svg {
+  .@{__select-tree-prefix-cls}-checkbox {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+    vertical-align: middle;
+    cursor: pointer;
+    outline: none;
+    background: url("@{svg-path}/checkbox-normal.svg") no-repeat;
+  }
+  .@{__select-tree-prefix-cls}-checkbox-disabled {
+    cursor: default;
+    background: url("@{svg-path}/checkbox-disabled.svg") no-repeat;
+  }
+  .@{__select-tree-prefix-cls}-checkbox-checked {
+    background: url("@{svg-path}/checkbox-checked.svg") no-repeat;
+  }
+  .@{__select-tree-prefix-cls}-checkbox-checked-disabled {
+    cursor: default;
+    background: url("@{svg-path}/checkbox-checked-disabled.svg") no-repeat;
+  }
+  .@{__select-tree-prefix-cls}-checkbox-halfchecked {
+    background: url("@{svg-path}/checkbox-partial-checked.svg") no-repeat;
+  }
+  .@{__select-tree-prefix-cls}-checkbox-halfchecked-disabled {
+    cursor: default;
+    background: url("@{svg-path}/checkbox-partial-checked-disabled.svg") no-repeat;
+  }
+}
+.no-svg {
+  
 }
 
 // input显示层动画

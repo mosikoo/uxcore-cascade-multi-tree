@@ -192,6 +192,10 @@ class SelectTrigger extends Component {
           placeholder={searchPlaceholder || i18n[locale].searchPlaceholder}
         />
       </div>;
+    const checkboxCls = {
+      [`${triggerPrefixCls}-checkbox`]: true,
+      [`${triggerPrefixCls}-checkbox-checked`]: allChecked,
+    };
 
     return (
       <div className={renderTreetriggerPrefixCls}>
@@ -200,11 +204,7 @@ class SelectTrigger extends Component {
         {
           !allCheckBtn ? null :
             <label className={`${renderTreetriggerPrefixCls}-select-all`}>
-              <input
-                className="kuma-checkbox" type="checkbox"
-                checked={allChecked} onChange={this.onChangeCheckAll}
-              />
-              <s />
+              <s className={classnames(checkboxCls)} onClick={this.onChangeCheckAll} />
               <span>{i18n[locale].all}</span>
             </label>
         }

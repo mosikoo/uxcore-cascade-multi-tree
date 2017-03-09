@@ -15,7 +15,7 @@ import i18n from './locale';
 import {
   UNSELECTABLE_STYLE, UNSELECTABLE_ATTRIBUTE, preventDefaultEvent,
   SHOW_ALL, SHOW_CHILD, SHOW_PARENT, toArray,
-  getTreeNodesStates, loopTreeData,
+  getTreeNodesStates, loopTreeData, filterNodesfromStrategy,
 } from './utils';
 
 function noop() {}
@@ -45,8 +45,6 @@ class CascadeMultiTree extends React.Component {
   }
 
   getValue(value) {
-    const { showCheckedStrategy } = this.props;
-
     this.treeNodesStates = getTreeNodesStates(this.renderedTreeData, value);
 
     return this.treeNodesStates.checkedNodes;
@@ -77,6 +75,7 @@ class CascadeMultiTree extends React.Component {
     const {
       prefixCls, maxTagTextLength, disabled,
       className, choiceTransitionName, locale,
+      showCheckedStrategy,
     } = this.props;
     const rootCls = {
       [className]: !!className,
@@ -89,7 +88,8 @@ class CascadeMultiTree extends React.Component {
       {i18n[locale].pullDownSelect}
     </span>);
 
-    const selectedValueNodes = value.map((singleValue) => {
+    const showVals = filterNodesfromStrategy(value, showCheckedStrategy);
+    const selectedValueNodes = showVals.map((singleValue) => {
       let content = singleValue.label;
       if (maxTagTextLength && typeof content === 'string' && content.length > maxTagTextLength) {
         content = `${content.slice(0, maxTagTextLength)}...`;
@@ -173,16 +173,16 @@ CascadeMultiTree.defaultProps = {
   notFoundContent: '',
   allowClear: true,
   disabled: false,
-  locale: 'en-us',
+  locale: 'zh-cn',
   onSelect: noop,
   onItemClick: noop,
   dropdownMatchSelectWidth: false,
   showSearch: true,
   allCheckBtn: true,
   resultsPanelAllClearBtn: true,
-  resultsPanelTitleStyle: { color: 'red' },
+  resultsPanelTitleStyle: { color: '#eee' },
   resultsPanelTitle: 'test title',
-  showCheckedStrategy: SHOW_CHILD,
+  showCheckedStrategy: SHOW_PARENT,
   isFilterToRpfromSearch: true,
   choiceTransitionName: 'uxcore-cascade-multi-tree-selection__choice-zoom',
 };

@@ -33,9 +33,10 @@ class TreeNode extends Component {
       // 总宽 - paddingLeft的宽度 - 箭头宽度 - checkbox宽度 - 右边剩余宽度
       labelWidth = `${width - paddindLeftWidth - arrowWidth - 18 - 24}px`;
     } else {
-      const isAllWidth = children && checked ? 46 : 0;
+      let isAllWidth = children && checked ? 47 : 0;
       // 英文造成的字体变化
-      const localeWidth = locale === 'en-us' ? 36 : 0;
+      isAllWidth += (children && checked && locale === 'en-us' ? 14 : 0);
+      const localeWidth = locale === 'en-us' ? 10 : 0;
       // 总宽 - paddingLeft的宽度 - 箭头宽度 - 已全选宽度 - 右边剩余宽度
       labelWidth = `${width - paddindLeftWidth - arrowWidth - isAllWidth - 46 - localeWidth}px`;
     }
@@ -83,9 +84,12 @@ class TreeNode extends Component {
     </span>);
 
     const iconCls = {
-      'kuma-tree-checkbox': true,
-      'kuma-tree-checkbox-checked': checked,
-      'kuma-tree-checkbox-indeterminate': halfChecked,
+      [`${prefixCls}-checkbox`]: true,
+      [`${prefixCls}-checkbox-disabled`]: disabled && !checked && !halfChecked,
+      [`${prefixCls}-checkbox-checked`]: checked && !disabled && !halfChecked,
+      [`${prefixCls}-checkbox-checked-disabled`]: checked && disabled && !halfChecked,
+      [`${prefixCls}-checkbox-halfchecked`]: !checked && !disabled && halfChecked,
+      [`${prefixCls}-checkbox-halfchecked-disabled`]: !checked && disabled && halfChecked,
     };
 
     return (
