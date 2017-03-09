@@ -1,6 +1,6 @@
 export const options = [{
   value: 'zhejiang',
-  label: '浙江杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州',
+  label: '浙江',
   children: [{
     value: 'hangzhou',
     label: '1杭州杭州杭州杭州杭州杭州杭州杭州杭州杭州',

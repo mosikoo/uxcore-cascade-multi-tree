@@ -10,6 +10,7 @@ const locale = {
     haveChose: '已选择',
     searchPlaceholder: '请输入搜索名称',
     pullDownSelect: '请下拉选择',
+    notFount: '无搜索结果',
   },
   'en-us': {
     clear: 'Clean',
@@ -22,6 +23,7 @@ const locale = {
     haveChose: 'Selected',
     searchPlaceholder: 'Please input the search name',
     pullDownSelect: 'Please pull down and select ',
+    notFount: 'not Fount',
   },
 };
 

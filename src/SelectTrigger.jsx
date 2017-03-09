@@ -17,6 +17,7 @@ class SelectTrigger extends Component {
     this.onChangeInput = this.onChangeInput.bind(this);
     this.onChangeCheckAll = this.onChangeCheckAll.bind(this);
     this.onValueChange = this.onValueChange.bind(this);
+    this.onResultsPanelAllClear = this.onResultsPanelAllClear.bind(this);
 
     this.width = props.dropdownMatchSelectWidth ?
       props.getContentDOMNode().offsetWidth : 240;
@@ -51,9 +52,20 @@ class SelectTrigger extends Component {
   }
 
   onChangeCheckAll() {
+    const { allChecked } = this.state;
+    const { treeData, onChange } = this.props;
     this.setState({
-      allChecked: !this.state.allChecked,
+      allChecked: !allChecked,
     });
+    const vals = allChecked ? [] :
+      treeData.map(item => item.value);
+
+    onChange(vals);
+  }
+
+  onResultsPanelAllClear() {
+    const { onChange } = this.props;
+    onChange([]);
   }
 
   /*
@@ -180,7 +192,9 @@ class SelectTrigger extends Component {
     const { triggerPrefixCls, showSearch, allCheckBtn, searchPlaceholder, locale } = this.props;
     const { searchValue, allChecked } = this.state;
     const renderTreetriggerPrefixCls = `${triggerPrefixCls}-renderTree`;
-    const notFount = (<span>notFount</span>);
+    const notFound = (<span className={`${renderTreetriggerPrefixCls}-notFound`}>
+      {i18n[locale].notFount}
+    </span>);
 
     const search = !showSearch ? null :
       <div className={`${renderTreetriggerPrefixCls}-search`}>
@@ -210,7 +224,7 @@ class SelectTrigger extends Component {
         }
         </div>
         <div className={`${renderTreetriggerPrefixCls}-body`}>
-          {treeNodes.length === 0 ? notFount : treeNodes}
+          {treeNodes.length === 0 ? notFound : treeNodes}
         </div>
       </div>
     );

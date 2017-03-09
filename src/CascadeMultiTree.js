@@ -173,7 +173,7 @@ CascadeMultiTree.defaultProps = {
   notFoundContent: '',
   allowClear: true,
   disabled: false,
-  locale: 'zh-cn',
+  locale: 'en-us',
   onSelect: noop,
   onItemClick: noop,
   dropdownMatchSelectWidth: false,
