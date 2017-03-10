@@ -13,6 +13,7 @@ class SelectTrigger extends Component {
     this.state = {
       searchValue: '',
       allChecked: false,
+      isSearchRender: true, // 防止过快输入，间隔渲染时间
     };
     this.onChangeInput = this.onChangeInput.bind(this);
     this.onChangeCheckAll = this.onChangeCheckAll.bind(this);
@@ -28,6 +29,7 @@ class SelectTrigger extends Component {
 
   componentWillMount() {
     this.treeOriginNodes = this.buildOriginTree();
+    this.getTreeNodes();
   }
 
   componentDidMount() {
@@ -38,6 +40,8 @@ class SelectTrigger extends Component {
     if (!(nextProps.cacheTreeData && this.treeOriginNodes)) {
       this.treeOriginNodes = this.buildOriginTree(nextProps);
     }
+
+    this.getTreeNodes(nextProps);
     const { allNodes, checkedNodes } = nextProps.treeNodesStates;
     this.allChecked = Object.keys(allNodes).length === checkedNodes.length;
   }
@@ -53,6 +57,19 @@ class SelectTrigger extends Component {
     this.setState({
       searchValue,
     });
+
+    // if (this.timeoutSearchValue) {
+    //   clearTimeout(this.timeoutSearchValue);
+    //   this.timeoutSearchValue = null;
+    //   this.setState({
+    //     isSearchRender: false,
+    //   });
+    // }
+    // this.timeoutSearchValue = setTimeout(() => {
+    //   this.setState({
+    //     isSearchRender: true,
+    //   });
+    // }, 300);
   }
 
   onChangeCheckAll() {
@@ -86,6 +103,33 @@ class SelectTrigger extends Component {
     }
 
     this.props.onChange(vals);
+  }
+
+  /*
+   * 构建选项树，treeOriginNodes及checked不变，此树不会变
+   */
+  getTreeNodes(_props) {
+    const propsBak = _props || this.props;
+    const { checkedNodesPos, halfCheckedNodesPos } = propsBak.treeNodesStates;
+
+    const recursive = children =>
+      toArray(children).map((child) => {
+        const props = assign({}, child.props);
+        if (checkedNodesPos.indexOf(props.pos) > -1) {
+          props.checked = true;
+        } else if (halfCheckedNodesPos.indexOf(props.pos) > -1) {
+          props.halfChecked = true;
+        }
+        if (child.props.children) {
+          return React.cloneElement(child, props, recursive(child.props.children));
+        }
+
+        return React.cloneElement(child, props);
+      });
+    // 加缓存 -> 计算基本树 带checked和origin
+
+
+    this.treeNodes = recursive(this.treeOriginNodes);
   }
 
   buildOriginTree(newprops) {
@@ -285,39 +329,25 @@ class SelectTrigger extends Component {
   }
 
   render() {
-    const { triggerPrefixCls, treeNodesStates, isFilterToRpfromSearch } = this.props;
-    const { searchValue } = this.state;
-    const { checkedNodesPos, halfCheckedNodesPos } = treeNodesStates;
+    const { triggerPrefixCls, isFilterToRpfromSearch } = this.props;
+    const { searchValue, isSearchRender } = this.state;
     let treeNodes;
 
-    const recursive = children =>
-      toArray(children).map((child) => {
-        const props = assign({}, child.props);
-        if (checkedNodesPos.indexOf(props.pos) > -1) {
-          props.checked = true;
-        } else if (halfCheckedNodesPos.indexOf(props.pos) > -1) {
-          props.halfChecked = true;
-        }
-        if (child.props.children) {
-          return React.cloneElement(child, props, recursive(child.props.children));
-        }
-
-        return React.cloneElement(child, props);
-      });
-
-    // 加缓存 -> 计算基本树 带checked和origin
-    this.treeNodes = recursive(this.treeOriginNodes);
+    const t = new Date().getTime();
     treeNodes = this.treeNodes;
 
+    // todo 1.面板 显示关闭，value不变时 ，这里不应该渲染；
+    // 2.连续搜索时。应该只是渲染最后一次结果
     if (searchValue) {
-      // 加缓存 // 带搜索结果
       treeNodes = this.processTreeNode(this.treeNodes);
+      console.log('搜索次数');
     }
-
     // 加缓存 结果面板部分
     const resultPanelTreeNodes = isFilterToRpfromSearch ?
       this.processTreeNode(treeNodes, false) :
       this.processTreeNode(this.treeNodes, false);
+
+    console.log('渲染用时：', `${(new Date().getTime() - t)}ms`);
 
     return (
       <div

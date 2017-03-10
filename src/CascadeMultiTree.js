@@ -206,11 +206,12 @@ class CascadeMultiTree extends React.Component {
             getContentDOMNode={this.getContentDOMNode}
             dropdownMatchSelectWidth={dropdownMatchSelectWidth}
             treeData={this.renderedTreeData}
+            cacheTreeData={this.cacheTreeData} // treeData的缓存
             treeNodesStates={this.treeNodesStates}
-            cacheTreeData={this.cacheTreeData}
-            {...this.props}
+            // cacheTreeNodesStates={this.cacheTreeNodesStates} //todo treeNodesStates的缓存
             onChange={this.onValueChange}
             onVisibleChange={this.onVisibleChange}
+            {...this.props}
           />
         }
         onVisibleChange={this.onVisibleChange}
